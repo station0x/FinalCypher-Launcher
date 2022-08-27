@@ -1,2 +1,19 @@
-# FinalCypher-Launcher
-FinalCypher electron launcher and patcher.
+# final-cypher
+
+## Project setup
+```
+yarn install
+```
+
+### Compiles and hot-reloads for development
+```
+yarn serve
+```
+
+### Compiles and minifies for production
+```
+yarn build
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
