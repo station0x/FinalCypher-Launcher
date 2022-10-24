@@ -1,0 +1,62 @@
+/* @import url('http://fonts.cdnfonts.com/css/konnect'); */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@font-face {
+    font-family: Konnect;
+    src: url("./assets/fonts/konnect/KonnectBlack.otf") format("opentype");
+    font-weight: 900;
+}
+@font-face {
+    font-family: Konnect;
+    src: url("./assets/fonts/konnect/KonnectExtraBold.otf") format("opentype");
+    font-weight: 800;
+}
+@font-face {
+    font-family: Konnect;
+    src: url("./assets/fonts/konnect/KonnectBold.otf") format("opentype");
+    font-weight: 700;
+}
+@font-face {
+    font-family: Konnect;
+    src: url("./assets/fonts/konnect/KonnectSemiBold.otf") format("opentype");
+    font-weight: 600;
+}
+@font-face {
+    font-family: Konnect;
+    src: url("./assets/fonts/konnect/KonnectMedium.otf") format("opentype");
+    font-weight: 500;
+}
+@font-face {
+    font-family: Konnect;
+    src: url("./assets/fonts/konnect/KonnectRegular.otf") format("opentype");
+    font-weight: 400;
+}
+@font-face {
+    font-family: Konnect;
+    src: url("./assets/fonts/konnect/KonnectLight.otf") format("opentype");
+    font-weight: 300;
+}
+@font-face {
+    font-family: Konnect;
+    src: url("./assets/fonts/konnect/KonnectThin.otf") format("opentype");
+    font-weight: 200;
+}
+@font-face {
+    font-family: Konnect;
+    src: url("./assets/fonts/konnect/KonnectHairline.otf") format("opentype");
+    font-weight: 100;
+}
+
+body {
+    user-select: none;
+    background-color: #030507;
+}
+
+/* adding some fun */
+* { 
+    transition: all 400ms ease-in-out;
+ }

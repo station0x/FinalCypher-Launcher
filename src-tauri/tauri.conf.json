@@ -7,12 +7,21 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "FinalCypher",
+    "productName": "final_cypher",
     "version": "0.0.0"
   },
   "tauri": {
     "allowlist": {
-      "all": true
+      "all": true,
+      "shell": {
+        "sidecar": true,
+        "scope": [
+          {
+            "name": "binaries/app",
+            "sidecar": true
+          }
+        ]
+      }
     },
     "bundle": {
       "active": true,
@@ -21,7 +30,7 @@
       "deb": {
         "depends": []
       },
-      "externalBin": [],
+      "externalBin": ["binaries/app"],
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -29,8 +38,8 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.station0x.finalcypherLauncher",
-      "longDescription": "",
+      "identifier": "com.station0x.finalcypher",
+      "longDescription": "Kill-to-Earn 5v5 strategic fps shooter by Station Zero X",
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "",
@@ -56,10 +65,13 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
-        "resizable": true,
+        "height": 800,
+        "resizable": false,
         "title": "FinalCypher",
-        "width": 800
+        "width": 1500,
+        "decorations": false,
+        "center": true,
+        "visible": true
       }
     ]
   }
