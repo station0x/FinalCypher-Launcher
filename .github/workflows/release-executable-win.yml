@@ -78,7 +78,7 @@ jobs:
           # projectPath: ${{env.working-directory}}
           releaseId: ${{ needs.create-release.outputs.release_id }}
   
-  publish-release:
+  publish-release-locally:
     runs-on: ubuntu-20.04
     needs: [ create-release, build-tauri ]
     
@@ -98,12 +98,13 @@ jobs:
               prerelease: false
             })
             
-  release:
+  public-release:
     runs-on: ubuntu-20.04
-    needs: [ create-release, build-tauri, publish-release ]
+    needs: [ create-release, build-tauri, publish-release-locally ]
     steps:
       - name: Publish Release
         uses: softprops/action-gh-release@v1
         with:
           repository: station0x/FC-Launcher-Binaries
-          token: ${{ secrets.CUSTOM_TOKEN }}
+          token: ${{ secrets.FC_TOKEN }}
+          tag_name: ${{process.env.PACKAGE_VERSION}}
