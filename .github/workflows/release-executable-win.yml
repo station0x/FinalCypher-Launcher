@@ -25,9 +25,9 @@ jobs:
             const { data } = await github.rest.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              tag_name: `finalcypher-launcher-v${process.env.PACKAGE_VERSION}`,
+              tag_name: `v${process.env.PACKAGE_VERSION}`,
               name: `FinalCypher Launcher v${process.env.PACKAGE_VERSION}`,
-              body: 'FinalCypher Launcher App version number ${process.env.PACKAGE_VERSION}',
+              body: 'FinalCypher Launcher App',
               draft: true,
               prerelease: false
             })
@@ -97,3 +97,11 @@ jobs:
               draft: false,
               prerelease: false
             })
+            
+  release:
+    steps:
+      - name: Publish Release
+        uses: softprops/action-gh-release@v1
+        with:
+          repository: station0x/FC-Launcher-Binaries
+          token: ${{ secrets.CUSTOM_TOKEN }}
