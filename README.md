@@ -1,6 +1,6 @@
-# Tauri + Vue 3
+# FinalCypher Launcher Monorepo
 
-This template should help get you started developing with Tauri + Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Tauri-based cross-native launcher for FinalCypher game. Front-end using Vue/Firebase with Rust back-end. Features includes CI/CD using github actions, Auto-updating using vercel and github releases and Game integrity checks using merkle-hash library. 
 
 ## Recommended IDE Setup
 
