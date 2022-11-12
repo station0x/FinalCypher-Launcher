@@ -1,8 +1,9 @@
 import { createApp } from "vue"
 import App from "./App.vue"
 import router from './router'
+import store from './store'
 import { invoke } from '@tauri-apps/api/tauri'
-
+import { auth } from '../firebaseConfig'
 
 // tailwind
 import './index.css'
@@ -23,8 +24,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     await invoke("close_splashscreen");
 })
 
+// auth.onAuthStateChanged
+
+auth.onAuthStateChanged(user => {
+    if(user) {
+        window.localStorage.setItem('user', user)
+        store.commit('SET_USER', user)
+        if(user.emailVerified) {
+            store.commit('SET_VERIFIED', true)
+            router.push({ name: 'FinalCypher' })
+        } else {
+            let polling = setInterval(() => {
+                user.reload()
+                user.getIdToken(true)
+                console.log(user.emailVerified)
+                if(user.emailVerified) {
+                    clearInterval(polling)
+                    window.localStorage.setItem('user', user)
+                    store.commit('SET_USER', user)
+                    store.commit('SET_VERIFIED', true)
+                    window.open('/', "_self")
+                    router.push({ name: 'FinalCypher' })
+                }
+            }, 1000)
+        }
+    } else {
+        window.localStorage.removeItem('user')
+        store.commit('SET_USER', null)
+        router.push({ name: 'Auth' })
+    }
+    // store.dispatch("fetchUser", user);
+});
+
 const app = createApp(App)
 app.use(router)
+app.use(store)
 app.mount('#app')
 
 

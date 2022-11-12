@@ -53,7 +53,7 @@
 
 body {
     user-select: none;
-    background-color: #030507;
+    background-color: rgb(23,23,23) !important;
 }
 
 /* adding some fun */
