@@ -23,5 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-# Secrets
-.env
+# Tauri Binaries
+src-tauri/binaries
+src-tauri/target

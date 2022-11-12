@@ -1,46 +1,67 @@
 import { createStore } from 'vuex'
+import { auth, functions } from '../../firebaseConfig'
+import { httpsCallable } from 'firebase/functions'
+import { 
+    createUserWithEmailAndPassword, 
+    signOut, 
+    sendEmailVerification,
+    updateProfile,
+    verifyBeforeUpdateEmail
+} from 'firebase/auth'
 
 const store = createStore({
     state: {
-        user: {
-            loggedIn: false,
-            data: null
-        }
+        user: window.localStorage.getItem('user'),
+        isVerified: false
     },
     mutations: {
-        SET_LOGGED_IN(state, value) {
-          state.user.loggedIn = value;
-        },
+        // SET_LOGGED_IN(state, value) {
+        //   state.user.loggedIn = value;
+        // },
         SET_USER(state, data) {
-          state.user.data = data;
+          state.user = data;
+        },
+        SET_VERIFIED(state, bool) {
+            state.isVerified = bool
         }
     },
     getters: {
         user(state){
-          return state.user
+          return JSON.parse(JSON.stringify(state.user))
+        },
+        userVerified(state) {
+            return state.isVerified
         }
     },
     actions: {
-        async register(context, { email, password, name}){
-            const response = await createUserWithEmailAndPassword(auth, email, password)
-            if (response) {
-                    context.commit('SET_USER', response.user)
-                    response.user.updateProfile({displayName: name})
-            } else {
-                    throw new Error('Unable to register user')
-            }
+        async register(context, { email, password, name }){
+            // context.commit('SET_USER', { email, password, name })
+            // context.commit('SET_LOGGED_IN', true)
+            let response = await createUserWithEmailAndPassword(auth, email, password)
+            .then(async (res) => {
+                await sendEmailVerification(res.user)
+                await updateProfile(res.user, { displayName: name })
+            })
+            // if (response) {
+            //         const setDisplayNameClient = httpsCallable(functions, 'setDisplayNameClient')
+            //         setDisplayNameClient({ displayName: name })
+            //         .then((result) => {
+            //             console.log(result)
+            //         })
+            // } else {
+            //         throw new Error('Unable to register user')
+            // }
         },
         async logIn(context, { email, password }){
             const response = await signInWithEmailAndPassword(auth, email, password)
-            if (response) {
-                    context.commit('SET_USER', response.user)
-            } else {
-                    throw new Error('login failed')
+            if (!response) {
+                throw new Error('login failed')
             }
       },
       async logOut(context){
             await signOut(auth)
             context.commit('SET_USER', null)
+            context.commit('SET_VERIFIED', false)
       },
       async fetchUser(context ,user) {
             context.commit("SET_LOGGED_IN", user !== null);

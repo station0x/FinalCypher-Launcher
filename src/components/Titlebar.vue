@@ -15,10 +15,10 @@ import { appWindow } from '@tauri-apps/api/window'
     export default {
         methods: {
             minimizeWindow() {
-                appWindow.minimize()
+              appWindow.minimize()
             },
             closeWindow() {
-                appWindow.close()
+              appWindow.close()
             }
         }
     }
