@@ -4,10 +4,42 @@ on:
       branches:
         - main
 jobs:
-  publish-tauri:
+  create-release:
+    runs-on: ubuntu-20.04
+    outputs:
+      release_id: ${{ steps.create-release.outputs.result }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: get version
+        run: echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+      - name: create release
+        id: create-release
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data } = await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: `finalcypher-launcher-v${process.env.PACKAGE_VERSION}`,
+              name: `FinalCypher Launcher v${process.env.PACKAGE_VERSION}`,
+              body: 'FinalCypher Launcher App version number ${process.env.PACKAGE_VERSION}',
+              draft: true,
+              prerelease: false
+            })
+            
+            return data.id
+
+  build-tauri:
+    needs: create-release
     strategy:
       fail-fast: false
       matrix:
+        #cross-platform --> platform: [macos-latest, ubuntu-latest, windows-latest]
         platform: [windows-latest]
     env:
       working-directory: .
@@ -28,6 +60,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y webkit2gtk-4.0
+        #sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
       - name: install app dependencies and build it
         run: yarn && yarn build
         working-directory: ${{env.working-directory}}
@@ -37,9 +70,30 @@ jobs:
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         with:
-          tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
-          releaseName: "App v__VERSION__"
-          releaseBody: "See the assets to download this version and install."
-          releaseDraft: true
-          prerelease: false
-          projectPath: ${{env.working-directory}}
+          # tagName: finalcypher-launcher-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
+          # releaseName: "FinalCypher Launcher v__VERSION__"
+          # releaseBody: "See the assets to download this version and install."
+          # releaseDraft: true
+          # prerelease: false
+          # projectPath: ${{env.working-directory}}
+          releaseId: ${{ needs.create-release.outputs.release_id }}
+  
+  publish-release:
+    runs-on: ubuntu-20.04
+    needs: [ create-release, build-tauri ]
+    
+    steps:
+      - name: publish release
+        id: publish-release
+        uses: actions/github-script@v6
+        env:
+          release_id: ${{ needs.create-release.outputs.release_id }}
+        with:
+          script: |
+            github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: process.env.release_id,
+              draft: false,
+              prerelease: false
+            })
