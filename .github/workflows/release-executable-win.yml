@@ -24,7 +24,7 @@ jobs:
           script: |
             const { data } = await github.rest.repos.createRelease({
               owner: context.repo.owner,
-              repo: 'station0x/FC-Launcher-Binaries',
+              repo: station0x/FC-Launcher-Binaries,
               tag_name: `v${process.env.PACKAGE_VERSION}`,
               name: `FinalCypher Launcher v${process.env.PACKAGE_VERSION}`,
               body: 'FinalCypher Launcher App',
