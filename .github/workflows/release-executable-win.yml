@@ -107,4 +107,4 @@ jobs:
         with:
           repository: station0x/FC-Launcher-Binaries
           token: ${{ secrets.FC_TOKEN }}
-          tag_name: ${{process.env.PACKAGE_VERSION}}
+          tag_name: ${{ process.env.PACKAGE_VERSION }}
