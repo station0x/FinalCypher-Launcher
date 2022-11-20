@@ -1,0 +1,3 @@
+[submodule "tauri-plugin-single-instance"]
+    path = src-tauri/plugins/tauri-plugin-single-instance
+    url = https://github.com/tauri-apps/tauri-plugin-single-instance
