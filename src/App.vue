@@ -2,6 +2,7 @@
   <div>
     <Titlebar/>
     <!-- <Auth/> -->
+    <h1 style="color: red">{{ logs }}</h1>
     <router-view></router-view>
 
     <!-- <div class="row">
@@ -79,12 +80,25 @@
   import Titlebar from "./components/Titlebar.vue"
   import { sendEmailVerification } from 'firebase/auth'
   import { mapGetters } from "vuex"
+  import { localDataDir, resourceDir } from '@tauri-apps/api/path'
+  import { readDir, BaseDirectory, exists, readBinaryFile } from "@tauri-apps/api/fs"
+  import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
+  import { relaunch } from '@tauri-apps/api/process'
+  // import 'filehash';
+  // var { hashElement } = require('folder-hash')
+// const child = await command.spawn();
+// await child.write('message');
+// await child.write([0, 1, 2, 3, 4, 5]);
+// Reads the `Desktop` directory recursively
+// const downloadDirPath = await downloadDir();
+
   export default {
     data() {
       return {
         modal: undefined,
         verificationLoader: false,
-        spamAlert: false
+        spamAlert: false,
+        logs: ''
       }
     },
     components: {
@@ -131,18 +145,69 @@
         this.verificationLoader = false
       }
     },
-    mounted() {
+    async mounted() {
       const targetEl = this.$refs.verifyModal
       const options = {
         placement: 'center',
         backdropClasses: 'bg-neutral-900 bg-opacity-50 dark:bg-opacity-70 fixed inset-0 z-40'
       }
       this.modal = new Modal(targetEl, options)
-      // if(this.user && !this.userVerified) {
-      //   this.modal.show()
-      // } else {
-      //   this.modal.hide()
-      // }
+
+      // buggy behaviour that weirdly works (wrong dir.formatting revert to executable path)
+      // const entries = await readDir("", {
+      //   dir: localDataDir,
+      //   recursive: true,
+      // });
+      // this.logs = entries
+
+      const resourceDirPath = await resourceDir();
+      console.log(resourceDirPath)
+      this.logs = resourceDirPath
+
+      try {
+        const { shouldUpdate, manifest } = await checkUpdate()
+        console.log(shouldUpdate, manifest)
+        // if (shouldUpdate) {
+        //   // display dialog
+        //   await installUpdate()
+        //   // install complete, restart the app
+        //   await relaunch()
+        // }
+      } catch (error) {
+        console.log(error)
+      }
+
+
+      // Check client version and update accordingly
+      // 1. create local merkle tree
+
+    const entries = await readDir("Windows", { dir: localDataDir, recursive: true});
+    console.log(entries)
+    async function processEntries(entries) {
+      for (const entry of entries) {
+        // console.log(entry)
+        // let file = await readBinaryFile(entry.path)
+        // console.log(file)
+        // console.log(`Entry: ${entry.path}`);
+        // Filehash.hash(file).then((digest) => {
+        //   console.log('digest: ', digest)
+        // })
+        if (entry.children) {
+          console.log(entry)
+          // processEntries(entry.children);
+        } else {
+          let reader = new FileReader()
+          // let file = await readBinaryFile(entry.path)
+          console.log(entry.path)
+          reader.readAsDataURL(entry.path)
+          console.log(file)
+          Filehash.hash(file).then((digest) => {
+            console.log('digest: ', digest)
+          })
+        }
+      }
+    }
+    processEntries(entries)
     }
   }
 </script>

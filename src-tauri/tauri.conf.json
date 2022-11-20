@@ -7,12 +7,32 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "FinalCypher",
+    "productName": "FinalCypher Launcher",
     "version": "0.1.0"
   },
   "tauri": {
     "allowlist": {
-      "all": true
+      "all": true,
+      "fs": {
+        "all":true,
+        "scope": ["**/*"]
+      },
+      "path": {
+        "all": true
+      },
+      "shell": {
+        "all": true,
+        "execute": true,
+        "sidecar": true,
+        "open": true,
+        "scope": [
+        {
+          "name": "fc-start",
+          "cmd": "Windows/FinalCypher.exe",
+          "args": true
+        }
+        ]
+      }
     },
     "systemTray": {
       "iconPath": "icons/icon.png",
@@ -25,7 +45,6 @@
       "deb": {
         "depends": []
       },
-      "externalBin": [],
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -48,7 +67,12 @@
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
-        "timestampUrl": ""
+        "timestampUrl": "",
+        "wix": {
+          "bannerPath": "assets/493x58.png",
+          "dialogImagePath": "assets/493x312.png",
+          "template": "assets/template.wxs"
+        }
       }
     },
     "security": {
@@ -56,14 +80,18 @@
     },
     "updater": {
       "active": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEQ5M0JENkI0OUIyMjcxMDMKUldRRGNTS2J0Tlk3MlJnWU56NkRlQmdLd3duVDJWNUFiWDJVWStqOFNoMEt3L1ZqNUJ6eEtra04K"
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEQ5M0JENkI0OUIyMjcxMDMKUldRRGNTS2J0Tlk3MlJnWU56NkRlQmdLd3duVDJWNUFiWDJVWStqOFNoMEt3L1ZqNUJ6eEtra04K",
+      "dialog": false,
+      "endpoints": [
+        "https://final-cypher-landing-isaaca-station0x.vercel.app/api/{{target}}/{{current_version}}"
+      ]
     },
     "windows": [
       {
         "fullscreen": false,
         "height": 800,
         "resizable": false,
-        "title": "FinalCypher",
+        "title": "FinalCypher Launcher",
         "width": 1500,
         "decorations": false,
         "center": true,

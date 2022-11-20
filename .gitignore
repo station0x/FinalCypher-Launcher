@@ -26,3 +26,7 @@ dist-ssr
 # Tauri Binaries
 src-tauri/binaries
 src-tauri/target
+
+# Testing
+src-tauri/Windows
+Windows
