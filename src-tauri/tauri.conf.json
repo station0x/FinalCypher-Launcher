@@ -26,11 +26,15 @@
         "sidecar": true,
         "open": true,
         "scope": [
-        {
-          "name": "fc-start",
-          "cmd": "Windows/FinalCypher.exe",
-          "args": true
-        }
+          {
+            "name": "fc-start",
+            "cmd": "Windows/FinalCypher.exe",
+            "args": true
+          },
+          {
+            "name": "binaries/app",
+            "sidecar": true
+          }
         ]
       }
     },
@@ -41,6 +45,7 @@
     "bundle": {
       "active": true,
       "category": "DeveloperTool",
+      "externalBin": ["binaries/app"],
       "copyright": "",
       "deb": {
         "depends": []
