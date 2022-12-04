@@ -84,6 +84,7 @@
   import { readDir, BaseDirectory, exists, readBinaryFile } from "@tauri-apps/api/fs"
   import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
   import { relaunch } from '@tauri-apps/api/process'
+  import { invoke } from '@tauri-apps/api/tauri'
   // import 'filehash';
   // var { hashElement } = require('folder-hash')
 // const child = await command.spawn();
@@ -177,38 +178,44 @@
         console.log(error)
       }
 
-
+      let merkleTree = await invoke('get_merkle_tree')
+      console.log(merkleTree)
       // Check client version and update accordingly
       // 1. create local merkle tree
 
-    const entries = await readDir("Windows", { dir: localDataDir, recursive: true});
-    console.log(entries)
-    async function processEntries(entries) {
-      for (const entry of entries) {
-        // console.log(entry)
-        // let file = await readBinaryFile(entry.path)
-        // console.log(file)
-        // console.log(`Entry: ${entry.path}`);
-        // Filehash.hash(file).then((digest) => {
-        //   console.log('digest: ', digest)
-        // })
-        if (entry.children) {
-          console.log(entry)
-          // processEntries(entry.children);
-        } else {
-          let reader = new FileReader()
+    readDir("Windows", { dir: localDataDir, recursive: true}).then((entries) => {
+      // windows folder found
+        console.log(entries)
+        async function processEntries(entries) {
+        for (const entry of entries) {
+          // console.log(entry)
           // let file = await readBinaryFile(entry.path)
-          console.log(entry.path)
-          reader.readAsDataURL(entry.path)
-          console.log(file)
-          Filehash.hash(file).then((digest) => {
-            console.log('digest: ', digest)
-          })
+          // console.log(file)
+          // console.log(`Entry: ${entry.path}`);
+          // Filehash.hash(file).then((digest) => {
+          //   console.log('digest: ', digest)
+          // })
+          if (entry.children) {
+            console.log(entry)
+            // processEntries(entry.children);
+          } else {
+            let reader = new FileReader()
+            // let file = await readBinaryFile(entry.path)
+            console.log(entry.path)
+            reader.readAsDataURL(entry.path)
+            console.log(file)
+            Filehash.hash(file).then((digest) => {
+              console.log('digest: ', digest)
+            })
+          }
         }
       }
-    }
-    processEntries(entries)
-    }
+      processEntries(entries)
+    }).catch((error) => {
+      // windows folder not found
+      console.log(error)
+    })
+  }
   }
 </script>
 
