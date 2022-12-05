@@ -30,6 +30,7 @@
     "ws": "^8.11.0"
   },
   "devDependencies": {
+    "@angablue/exe": "^1.1.6",
     "@tauri-apps/cli": "^1.2.1",
     "@vitejs/plugin-vue": "^3.0.1",
     "autoprefixer": "^10.4.12",

@@ -2,6 +2,14 @@
 # yarn lockfile v1
 
 
+"@angablue/exe@^1.1.6":
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/@angablue/exe/-/exe-1.1.6.tgz#1233d13e0cddb489af561a14a3f4041a69e130d2"
+  integrity sha512-8LmDcyp9OEO3WdTiQPYymMvhXucQDzT/Sk+bK9tu5I4cdYtsXRlmz1O0Z1S0DUE6GMe3qq2aSRSFOWAiY1RMrQ==
+  dependencies:
+    pkg "^5.8.0"
+    resedit "^1.6.0"
+
 "@babel/generator@7.18.2":
   version "7.18.2"
   resolved "https://registry.yarnpkg.com/@babel/generator/-/generator-7.18.2.tgz#33873d6f89b21efe2da63fe554460f3df1c5880d"
@@ -2680,6 +2688,11 @@ path-type@^4.0.0:
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
+pe-library@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/pe-library/-/pe-library-0.3.0.tgz#7b29c024b83c701d6c5c3759664340255fec70bf"
+  integrity sha512-mMVGKfeI6VOLqMOCiLaU4KNd4cgk8YcQVvJ07YIA6iujM4uKOgmDsmIp1qsKWEHt8cMoizVGFniQUrtN6pjtJA==
+
 picocolors@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/picocolors/-/picocolors-1.0.0.tgz#cb5bdc74ff3f51892236eaf79d68bc44564ab81c"
@@ -2974,6 +2987,13 @@ require-directory@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/require-directory/-/require-directory-2.1.1.tgz#8c64ad5fd30dab1c976e2344ffe7f792a6a6df42"
   integrity sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==
+
+resedit@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/resedit/-/resedit-1.6.0.tgz#a2da6e864b151f72575685b97fe437e482594b89"
+  integrity sha512-QEZe3MOyHIN3qULSLuZBEcxSqv93yjRXeDMJOYAH+ZFw89wj31slY9y6rp8Ul9A7JgT98q7/5CTvYEpG33B/5w==
+  dependencies:
+    pe-library "^0.3.0"
 
 resolve@^1.1.7, resolve@^1.10.0, resolve@^1.22.0, resolve@^1.22.1:
   version "1.22.1"
