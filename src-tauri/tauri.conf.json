@@ -32,7 +32,7 @@
             "args": true
           },
           {
-            "name": "binaries/app",
+            "name": "binaries/fc-core",
             "sidecar": true
           }
         ]
@@ -45,7 +45,7 @@
     "bundle": {
       "active": true,
       "category": "DeveloperTool",
-      "externalBin": ["binaries/app"],
+      "externalBin": ["binaries/fc-core"],
       "copyright": "",
       "deb": {
         "depends": []

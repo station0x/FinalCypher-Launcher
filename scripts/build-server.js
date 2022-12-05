@@ -1,4 +1,4 @@
-import { execa } from 'execa';
+import { execa, execaNode } from 'execa';
 import fs from 'node:fs';
 import { oraPromise } from 'ora';
 
@@ -22,8 +22,8 @@ async function moveBinaries() {
   }
 
   fs.renameSync(
-    `src-tauri/binaries/app${extension}`,
-    `src-tauri/binaries/app-${targetTriple}${extension}`
+    `src-tauri/binaries/fc-core${extension}`,
+    `src-tauri/binaries/fc-core-${targetTriple}${extension}`
   );
 }
 
@@ -41,16 +41,14 @@ async function createBundle() {
  * This function is used to create single executable from server file and nodejs
  */
 async function createServerPackage() {
-  return execa('node_modules/.bin/pkg', ['package.json', '--output', 'src-tauri/binaries/app']);
+  // return execa('node_modules/.bin/pkg', ['package.json', '--output', 'src-tauri/binaries/fc-core']);
+  return execaNode(['scripts/package-server.cjs'])
 }
 
 async function main() {
   try {
-    console.log('bundling..')
     await createBundle();
-    console.log('packaging..')
     await createServerPackage();
-    console.log('moving binaries..')
     await moveBinaries();
   } catch (e) {
     throw e;
