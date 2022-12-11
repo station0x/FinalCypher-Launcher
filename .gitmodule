@@ -1,3 +1,7 @@
 [submodule "tauri-plugin-single-instance"]
     path = src-tauri/plugins/tauri-plugin-single-instance
     url = https://github.com/tauri-apps/tauri-plugin-single-instance
+[submodule "node-folder-hash"]
+    path = modules/node-folder-hash
+    url = https://github.com/station0x/node-folder-hash
+

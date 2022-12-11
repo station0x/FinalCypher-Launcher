@@ -9,7 +9,7 @@ const build = exe({
     target: 'latest-win-x64',
     icon: './src-tauri/icons/core/icon.ico', // Application icons must be in .ico format
     properties: {
-        FileDescription: 'FinalCypher Launcher sidecar module',
+        FileDescription: 'FinalCypher Launcher Core',
         ProductName: 'FinalCypher Launcher Core',
         LegalCopyright: 'Station Zero X'
     }
