@@ -1,5 +1,5 @@
 <template>
-    <section id="fc-home" class="bg-white h-screen dark:bg-neutral-900">
+    <section id="fc-home" :style="randCover()" class="h-screen dark:bg-neutral-900">
         <div class="grid h-5/6 grid-cols-10">
             <!-- Create account -->
             <div class="flex col-span-7 mt-20 px-10 items-center justify-left ml-24 mb-24 py-6 lg:py-0 sm:px-0">
@@ -47,20 +47,16 @@
             </div>              
         </div>
         <div id="main-footer" class="flex w-screen h-1/6 justify-left items-center">
-            <button @click="openFC" id="play-btn" class="text-[rgba(0,0,0,.7)] ml-24 justify-center w-[150px] h-[60px] text-3xl font-Konnect font-bold bg-brand-cold-700 hover:bg-brand-cold-800 focus:ring-4 focus:outline-none focus:ring-brand-cold-300 rounded-lg px-5 py-4 text-center inline-flex items-center dark:bg-brand-cold-600 dark:hover:bg-brand-cold-700 dark:focus:ring-brand-cold-800">
-                Play
-                <svg id="play-icon" class="ml-2 -mr-1 w-8 h-8" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
-            </button>
+            <PlayBtn @click="openFC" />
         </div>
         <!-- Dropdown -->
         <div id="dropdownAvatarName" class="absolute top-16  right-20 z-10 w-44 bg-white rounded divide-y divide-neutral-200 shadow dark:bg-neutral-800 dark:divide-neutral-700">
             <div class="py-3 px-4 text-sm text-neutral-900 dark:text-neutral-400">
-            <div class="font-medium ">Hey</div>
             <div class="truncate">{{ user.displayName }}</div>
             </div>
-            <ul class="py-1 text-sm tracking-wide text-neutral-700 dark:text-neutral-400" aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton">
+            <ul class="text-sm tracking-wide text-neutral-700 dark:text-neutral-400" aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton">
             <li>
-                <a href="#" class="block py-2 px-4 hover:bg-neutral-100 dark:hover:bg-[rgba(0,0,0,.15)] dark:hover:text-white">Report a bug</a>
+                <a class="block cursor-pointer py-2.5 px-4 hover:bg-neutral-100 dark:hover:bg-neutral-700  dark:hover:text-white">Report a bug</a>
             </li>
             <!-- <li>
                 <a href="#" class="block py-2 px-4 hover:bg-neutral-100 dark:hover:bg-[rgba(0,0,0,.15)] dark:hover:text-white">Settings</a>
@@ -69,9 +65,9 @@
                 <a href="#" class="block py-2 px-4 hover:bg-neutral-100 dark:hover:bg-[rgba(0,0,0,.15)] dark:hover:text-white">Earnings</a>
             </li> -->
             </ul>
-            <div class="py-1">
-            <a @click="signOut" href="#" class="block py-2 px-4 text-sm text-neutral-700 hover:bg-neutral-100 dark:hover:bg-[rgba(0,0,0,.15)] dark:text-neutral-400 dark:hover:text-white">Sign out</a>
-            <a @click="close" href="#" class="block py-2 px-4 text-sm text-neutral-700 hover:bg-neutral-100 dark:hover:bg-[rgba(0,0,0,.15)] dark:text-neutral-400 dark:hover:text-white">Exit</a>
+            <div class="">
+            <a @click="signOut" class="block cursor-pointer py-2.5 px-4 text-sm text-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700  dark:text-neutral-400 dark:hover:text-white">Sign out</a>
+            <a @click="close" class="block cursor-pointer py-2.5 px-4 text-sm text-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700  dark:text-neutral-400 dark:hover:text-white">Exit</a>
             </div>
         </div>
     </section>
@@ -81,9 +77,21 @@
 import { appWindow } from '@tauri-apps/api/window'
 import { Command } from '@tauri-apps/api/shell'
 import { auth } from '../../../firebaseConfig'
+import PlayBtn from '../../components/PlayBtn.vue'
 // import { getAuth } from '@firebase/auth'
 
 export default {
+    data() {
+        return {
+            backgrounds: [
+                "atropa",
+                "zodwa"
+            ]
+        }
+    },
+    components: {
+        PlayBtn
+    },
     computed: {
         user() {
             if(this.$store.state.user) return this.$store.state.user
@@ -97,6 +105,9 @@ export default {
         async close() {
             await appWindow.close()
         },
+        randCover() {
+            return `background-image: url('/cover-${this.backgrounds[Math.floor(Math.random()*this.backgrounds.length)]}.png')`
+        },
         async openFC() {
             let IdToken = ''
             auth.currentUser.getIdToken(true).then(function(idToken) {
@@ -106,16 +117,6 @@ export default {
             }).catch(function(error) {
                 console.log(error)
             });
-            // getAuth(app).currentUser.getIdTokenResult
-            // get
-            // .verifyIdToken(IdToken)
-            // .then((decodedToken) => {
-            //     const uid = decodedToken.uid;
-            //     console.log(uid)
-            // })
-            // .catch((error) => {
-            //     console.log(error)
-            // });
         }
     }
 }
@@ -124,10 +125,10 @@ export default {
 
 <style>
 #fc-home {
-    background-image: url('../../assets/img/cover-lg.png');
+    /* background-color: rgb(23,23,23); */
     background-position: center;
     background-size: cover;
-    background-repeat: no-repeat;
+    background-repeat: no-repeat !important;
 }
 #main-footer {
     background: linear-gradient(107.35deg, rgba(14, 14, 14, 0.405) 15.06%, rgba(41, 41, 41, 0.5) 100.35%);
@@ -140,11 +141,14 @@ export default {
     background: linear-gradient(99.85deg, #58ffc5 1.39%, rgba(71, 255, 194, 0.4) 112.45%);  
     filter: drop-shadow(0 0em 1.5em #01E898);
 }
-#play-btn:hover #play-icon {
+#play-icon {
+    color: rgba(0,0,0,.9);
+}
+/* #play-btn:hover #play-icon {
     width: 38px;
     height: 38px;
     color: black;
-}
+} */
 #dropdownAvatarName {
     text-transform: uppercase;
 }
