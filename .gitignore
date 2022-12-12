@@ -33,3 +33,9 @@ src-tauri/**/*.dll
 src-tauri/**/*.avi
 src-tauri/**/*.exe
 src-tauri/**/*.txt
+
+server/**/*.pak
+server/**/*.dll
+server/**/*.avi
+server/**/*.exe
+server/**/*.txt

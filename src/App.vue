@@ -134,47 +134,51 @@
           }
       },
       async mounted() {
-      //     this.connection = new WebSocket('ws://localhost:6212/');
-      //     // console.log(connection, connection.url)
-      //     this.connection.onmessage = async (event) => {
-      //           // let cwd = (await axios.get('http://localhost:6212/cwd')).data.cwd
+          this.connection = new WebSocket('ws://localhost:6213/');
+          console.log(this.connection, this.connection.url)
+          this.connection.onopen = () => {
+            console.log('WS connected and opened.')
+          }
+          this.connection.onmessage = async (event) => {
+                let message = JSON.parse(event.data);
+                this.time = `${this.formatBytes(message.totalDownloaded)} / ${this.formatBytes(message.totalSize)}`
+                // this.time = `${message.totalDownloaded} / ${message.totalSize}`
+                let cwd = (await axios.get('http://localhost:6212/cwd')).data.cwd
+                console.log(cwd)
+                // let urls = message.assetsURL
+                // for (let url in urls) {
+                //     let URL = urls[url]
+                //     URL = URL.split('://')[1]
+                //     URL = "http://" + URL
+                //     let name = URL.split('/')
+                //     name = name[name.length - 1].split('%40').join('/')
+                //     // console.log(name, URL)
+                //     name = name.split('/')
+                //     name = name[name.length-1]
+                //     let path = cwd + '\\Client\\' + name
+                //     console.log(path)
+                //     console.log('hello')
+                //     console.log(path)
+                //     try {
+                //         const data = (await client.get(URL, { responseType: ResponseType.Binary })).data
+                //         console.log(data)
+                //         await fs.writeBinaryFile(path, data);
+                //         // console.log(`${cwd}\\${name}`)
+                //     } catch(err) {
+                //         console.log(err)
+                //     }
+                // }
+                // const data = (
+                // await client.get(url, {
+                //         responseType: ResponseType.Binary,
+                //     })
+                //     ).data
+                // await fs.writeBinaryFile(
+                //     destFilePath, // Change this to where the file should be saved
+                //     data
+                // );
+          }
 
-      //           console.log(JSON.parse(event.data))
-      //           let message = JSON.parse(event.data);
-      //           this.time = this.formatBytes(message.totalSize)
-      //           let urls = message.assetsURL
-      //           // for (let url in urls) {
-      //           //     let URL = urls[url]
-      //           //     URL = URL.split('://')[1]
-      //           //     URL = "http://" + URL
-      //           //     let name = URL.split('/')
-      //           //     name = name[name.length - 1].split('%40').join('/')
-      //           //     // console.log(name, URL)
-      //           //     name = name.split('/')
-      //           //     name = name[name.length-1]
-      //           //     let path = cwd + '\\Client\\' + name
-      //           //     console.log(path)
-      //           //     console.log('hello')
-      //           //     // console.log(path)
-      //           //     // try {
-      //           //     //     const data = (await client.get(URL, { responseType: ResponseType.Binary })).data
-      //           //     //     console.log(data)
-      //           //     //     await fs.writeBinaryFile(path, data);
-      //           //     //     // console.log(`${cwd}\\${name}`)
-      //           //     // } catch(err) {
-      //           //     //     console.log(err)
-      //           //     // }
-      //           // }
-      //           //   const data = (
-      //           //     await client.get(url, {
-      //           //             responseType: ResponseType.Binary,
-      //           //         })
-      //           //         ).data
-      //           //     await fs.writeBinaryFile(
-      //           //         destFilePath, // Change this to where the file should be saved
-      //           //         data
-      //           //     );
-      //     }
           const targetEl = this.$refs.verifyModal
           const options = {
               placement: 'center',
@@ -200,13 +204,13 @@
       //     }
       },
       async created() {
-          const cmd = Command.sidecar('binaries/fc-core');
-          cmd.spawn().then((child) => {
+            const cmd = Command.sidecar('binaries/fc-core');
+            cmd.spawn().then((child) => {
                 console.log(child.pid)
                 listen(TauriEvent.WINDOW_DESTROYED, function () {
                     child.kill();
                 })
-          });
+            });
           cmd.addListener("close", function() {
             cmd.spawn().then((child) => {
                 console.log(child.pid)
@@ -215,30 +219,34 @@
                     })
             });
           })
-  
-          // axios.get('http://localhost:6212/isSynced').then((resp) => {
-          //   // self.$store.commit('SET_MERKLE_TREE', resp.data.hash)
-          //   console.log(resp)
-          // })
-          // let clientExists = (await axios.get('http://localhost:6212/clientExists')).data.exists
-          // if(clientExists) {
-  
-          // } else {
-          //     this.connection.onopen = () => {
-          //         this.connection.send('downloadClient');
-          //     }
-          // }
+
+        // axios.get('http://localhost:6212/isSynced').then((resp) => {
+        //   // self.$store.commit('SET_MERKLE_TREE', resp.data.hash)
+        //   console.log(resp)
+        // })
+        let clientExists = (await axios.get('http://localhost:6212/clientExists')).data.exists
+        console.log(clientExists)
+        this.connection.onopen = () => {
+            this.connection.send('downloadClient');
+        }
+        // if(clientExists) {
+
+        // } else {
+        //     this.connection.onopen = () => {
+        //         this.connection.send('downloadClient');
+        //     }
+        // }
 
         //   const appLocalDataDirPath = await appLocalDataDir();
         //   const appDataDirPath = await appDataDir();
         // //   const BaseDirectoryPath = await BaseDirectory();
         //   console.log(appLocalDataDirPath, appDataDirPath, resourceDirPath)
-  
-          
-          // setTimeout(() => {
-          //   self.$router.push({ name: 'FinalCypher' })
-          //   self.isApp = true
-          // }, 7000)
+
+            
+        // setTimeout(() => {
+        //   self.$router.push({ name: 'FinalCypher' })
+        //   self.isApp = true
+        // }, 7000)
   
       }
     }
