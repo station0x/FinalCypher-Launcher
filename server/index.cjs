@@ -15,8 +15,8 @@ const server = http.createServer();
 const websocketServer = new WebSocket.Server({ server });
 const Downloader = require("nodejs-file-downloader");
 
-let basePath = process.env.MODE ? process.cwd() : path.resolve(process.cwd() + '\\..\\src-tauri\\')
-
+let basePath = process.cwd() //====================> production
+// let basePath = process.env.MODE ? process.cwd() : path.resolve(process.cwd() + '\\..\\')
 // server.on('request', app);
 
 websocketServer.on("connection", (webSocketClient) => {
@@ -88,6 +88,7 @@ websocketServer.on("connection", (webSocketClient) => {
                         await downloader.download();
                     } catch (error) {
                         console.log(error);
+                        webSocketClient.send(JSON.stringify({ error}))
                     }
                 }
                 webSocketClient.send(JSON.stringify({ assetsURL, totalSize }))

@@ -10,8 +10,8 @@ const path = require('node:path');
 const https = require('https')
 const { execa, execaNode } = require("execa");
 
-// let basePath = process.cwd() ====================> production
-let basePath = process.env.MODE ? process.cwd() : path.resolve(process.cwd() + '\\..\\src-tauri\\')
+let basePath = process.cwd() //====================> production
+// let basePath = process.env.MODE ? process.cwd() : path.resolve(process.cwd() + '\\..\\')
 
 let app = express();
 app.use(cors({
@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/cwd', (req, res) => {
-    res.status(200).json ({ cwd: basePath })
+    res.status(200).json({ cwd: process.cwd() })
 })
 
 app.get('/clientExists', (req, res) => {
@@ -37,15 +37,38 @@ app.get('/clientExists', (req, res) => {
     if (fs.existsSync(dir)) {
         exists = true
     }
-    return res.send({ exists })
+    return res.status(200).json({ exists })
 })
 
-app.get('/constructLocalTree', async (req, res) => {
-    let tree = (await execa('../modules/node-folder-hash/bin/folder-hash', [
-        `${basePath}\\Client\\`
-    ])).stdout
+app.get('/getTree', async (req, res) => {
+    // let success = false
+    // let tree = {}
+    // const dir = `${basePath}\\Client`
+    // if (fs.existsSync(dir)) {
+    //     success = true
+    //     tree = (await execa('../modules/node-folder-hash/bin/folder-hash', [
+    //         `${basePath}\\Client`
+    //     ])).stdout
+    // }
+    // let binary = path.resolve(process.cwd() + '\\..\\modules\\node-folder-hash\\bin\\folder-hash')
+    // path = path.split('\\').join('/')
+    
+    try {
+        // let path = process.cwd()
+        // path.split('\\').join('/')
+        // basePath = basePath.split('\\').join('/')
+        // binary = binary.split('\\').join('/')
+        let { stdout } = await execa('modules/node-folder-hash/bin/folder-hash', [
+            `${basePath}/Client`
+        ])
+        console.log(stdout)
+        // console.log(`${basePath}/modules/node-folder-hash/bin/folder-hash`, `${basePath}/Client/`)
+        res.status(200).json({ tree: stdout })
+    } catch(err) {
+        console.log(err)
+        res.status(200).json({ success: false, err, binary })
+    }
     // fs.writeFileSync(`localMerkle.json`, tree, "utf-8");
-    res.status(200).json({ tree })
 })
 
 // app.get('/isSynced', async (req, res)  => {
