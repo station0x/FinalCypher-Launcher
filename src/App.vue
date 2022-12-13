@@ -5,7 +5,10 @@
       </div>
       <div>
         <Titlebar v-if="isApp"/>
-        <!-- <h2 style="color: red" class="bg-neutral-800">{{time}}</h2> -->
+        <h2 style="color: red" class="bg-neutral-800">{{time}}</h2>
+        <h2 style="color: red" class="bg-neutral-800">{{gameTree}}</h2>
+        <h2 style="color: red" class="bg-neutral-800">{{wsError}}</h2>
+
         <router-view></router-view>
         <!-- verification modal -->
         <div v-show="user && !user.emailVerified" ref="verifyModal" id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 md:inset-0 h-modal md:h-full">
@@ -56,11 +59,9 @@
     import { listen, TauriEvent } from "@tauri-apps/api/event";
     import { Command } from "@tauri-apps/api/shell";
     import * as fs from "@tauri-apps/api/fs";
-    import { getClient, ResponseType } from "@tauri-apps/api/http";
+    // import { getClient, ResponseType } from "@tauri-apps/api/http";
     import axios from 'axios'
 
-
-    const client = await getClient();
     // import 'filehash';
     // var { hashElement } = require('folder-hash')
     // const child = await command.spawn();
@@ -82,7 +83,8 @@
             isApp: true,
             connection: undefined,
             downloadSize: undefined,
-            time: undefined
+            time: undefined,
+            wsError: undefined
           }
       },
       components: {
@@ -137,15 +139,31 @@
       },
       async mounted() {
           this.connection = new WebSocket('ws://localhost:6213/');
-          console.log(this.connection, this.connection.url)
-          this.connection.onopen = () => {
+          this.connection.onopen = async () => {
             console.log('WS connected and opened.')
+            this.connection.send('downloadClient');
+
+            // let clientExists = (await axios.get('http://localhost:6212/clientExists')).data.exists
+            // console.log(clientExists)
+            // if(!clientExists){
+            // } else {
+            //   try {
+            //     let tree = (await axios.get('http://localhost:6212/getTree'))
+            //     this.gameTree = tree
+            //     console.log(tree)
+            //   } catch(err) {
+            //     console.log(err)
+            //   }
+            //   // console.log(tree)
+            //   // this.connection.send('updateC')
+            // }
           }
           this.connection.onmessage = async (event) => {
                 let message = JSON.parse(event.data);
                 this.$store.commit('SET_TOTAL_SIZE', message.totalSize)
                 this.$store.commit('SET_TOTAL_DOWNLOADED', message.totalDownloaded)
                 this.time = `${this.formatBytes(message.totalDownloaded)} / ${this.formatBytes(message.totalSize)}`
+                if(message.error) this.wsError = message.error
                 // this.time = `${message.totalDownloaded} / ${message.totalSize}`
           }
 
@@ -181,35 +199,21 @@
                 child.kill();
             })
         });
-        cmd.addListener("close", function() {
-          cmd.spawn().then((child) => {
-              console.log(child.pid)
-                  listen(TauriEvent.WINDOW_DESTROYED, function () {
-                      child.kill();
-                  })
-          });
-        })
+        // cmd.addListener("close", function() {
+        //   cmd.spawn().then((child) => {
+        //       console.log(child.pid)
+        //       this.connection = new WebSocket('ws://localhost:6213/');
+        //       listen(TauriEvent.WINDOW_DESTROYED, function () {
+        //           child.kill();
+        //       })
+        //   });
+        // })
 
         // axios.get('http://localhost:6212/isSynced').then((resp) => {
         //   // self.$store.commit('SET_MERKLE_TREE', resp.data.hash)
         //   console.log(resp)
         // })
-        let clientExists = (await axios.get('http://localhost:6212/clientExists')).data.exists
-        console.log(clientExists)
-        if(!clientExists){
-          this.connection.onopen = async () => {
-            this.connection.send('downloadClient');           
-          }
-        } else {
-          try {
-            let tree = (await axios.get('http://localhost:6212/constructLocalTree')).data.tree
-            console.log(tree)
-          } catch(err) {
-            console.log(err)
-          }
-          // console.log(tree)
-          // this.connection.send('updateC')
-        }
+
 
         // if(clientExists) {
 
