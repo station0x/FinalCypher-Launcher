@@ -5,7 +5,7 @@
       </div>
       <div>
         <Titlebar v-if="isApp"/>
-        <h2 style="color: red" class="bg-neutral-800">{{time}}</h2>
+        <!-- <h2 style="color: red" class="bg-neutral-800">{{time}}</h2> -->
         <router-view></router-view>
         <!-- verification modal -->
         <div v-show="user && !user.emailVerified" ref="verifyModal" id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 md:inset-0 h-modal md:h-full">
@@ -72,15 +72,17 @@
     export default {
       data() {
           return {
-              modal: undefined,
-              verificationLoader: false,
-              spamAlert: false,
-              logs: '',
-              time: undefined,
-              gameTree: undefined,
-              isApp: true,
-              connection: undefined,
-              downloadSize: undefined
+            modal: undefined,
+            verificationLoader: false,
+            spamAlert: false,
+            logs: '',
+            totalSize: 1000,
+            totalDownloaded: 500,
+            gameTree: undefined,
+            isApp: true,
+            connection: undefined,
+            downloadSize: undefined,
+            time: undefined
           }
       },
       components: {
@@ -141,42 +143,10 @@
           }
           this.connection.onmessage = async (event) => {
                 let message = JSON.parse(event.data);
+                this.$store.commit('SET_TOTAL_SIZE', message.totalSize)
+                this.$store.commit('SET_TOTAL_DOWNLOADED', message.totalDownloaded)
                 this.time = `${this.formatBytes(message.totalDownloaded)} / ${this.formatBytes(message.totalSize)}`
                 // this.time = `${message.totalDownloaded} / ${message.totalSize}`
-                let cwd = (await axios.get('http://localhost:6212/cwd')).data.cwd
-                console.log(cwd)
-                // let urls = message.assetsURL
-                // for (let url in urls) {
-                //     let URL = urls[url]
-                //     URL = URL.split('://')[1]
-                //     URL = "http://" + URL
-                //     let name = URL.split('/')
-                //     name = name[name.length - 1].split('%40').join('/')
-                //     // console.log(name, URL)
-                //     name = name.split('/')
-                //     name = name[name.length-1]
-                //     let path = cwd + '\\Client\\' + name
-                //     console.log(path)
-                //     console.log('hello')
-                //     console.log(path)
-                //     try {
-                //         const data = (await client.get(URL, { responseType: ResponseType.Binary })).data
-                //         console.log(data)
-                //         await fs.writeBinaryFile(path, data);
-                //         // console.log(`${cwd}\\${name}`)
-                //     } catch(err) {
-                //         console.log(err)
-                //     }
-                // }
-                // const data = (
-                // await client.get(url, {
-                //         responseType: ResponseType.Binary,
-                //     })
-                //     ).data
-                // await fs.writeBinaryFile(
-                //     destFilePath, // Change this to where the file should be saved
-                //     data
-                // );
           }
 
           const targetEl = this.$refs.verifyModal
@@ -204,21 +174,21 @@
       //     }
       },
       async created() {
-            const cmd = Command.sidecar('binaries/fc-core');
-            cmd.spawn().then((child) => {
-                console.log(child.pid)
-                listen(TauriEvent.WINDOW_DESTROYED, function () {
-                    child.kill();
-                })
-            });
-          cmd.addListener("close", function() {
-            cmd.spawn().then((child) => {
-                console.log(child.pid)
-                    listen(TauriEvent.WINDOW_DESTROYED, function () {
-                        child.kill();
-                    })
-            });
-          })
+        const cmd = Command.sidecar('binaries/fc-core');
+        cmd.spawn().then((child) => {
+            console.log(child.pid)
+            listen(TauriEvent.WINDOW_DESTROYED, function () {
+                child.kill();
+            })
+        });
+        cmd.addListener("close", function() {
+          cmd.spawn().then((child) => {
+              console.log(child.pid)
+                  listen(TauriEvent.WINDOW_DESTROYED, function () {
+                      child.kill();
+                  })
+          });
+        })
 
         // axios.get('http://localhost:6212/isSynced').then((resp) => {
         //   // self.$store.commit('SET_MERKLE_TREE', resp.data.hash)
@@ -226,9 +196,21 @@
         // })
         let clientExists = (await axios.get('http://localhost:6212/clientExists')).data.exists
         console.log(clientExists)
-        this.connection.onopen = () => {
-            this.connection.send('downloadClient');
+        if(!clientExists){
+          this.connection.onopen = async () => {
+            this.connection.send('downloadClient');           
+          }
+        } else {
+          try {
+            let tree = (await axios.get('http://localhost:6212/constructLocalTree')).data.tree
+            console.log(tree)
+          } catch(err) {
+            console.log(err)
+          }
+          // console.log(tree)
+          // this.connection.send('updateC')
         }
+
         // if(clientExists) {
 
         // } else {

@@ -1,12 +1,17 @@
 'use strict';
+require('dotenv').config()
 const { hashElement } = require('folder-hash');
 let express = require('express');
 var cors = require('cors')
 const { Octokit } = require("@octokit/rest");
 const octokit = new Octokit()
 const fs = require('fs');
+const path = require('node:path');
 const https = require('https')
 const { execa, execaNode } = require("execa");
+
+// let basePath = process.cwd() ====================> production
+let basePath = process.env.MODE ? process.cwd() : path.resolve(process.cwd() + '\\..\\src-tauri\\')
 
 let app = express();
 app.use(cors({
@@ -22,12 +27,12 @@ app.get('/', (req, res) => {
 });
 
 app.get('/cwd', (req, res) => {
-    res.status(200).json ({ cwd: process.cwd() })
+    res.status(200).json ({ cwd: basePath })
 })
 
 app.get('/clientExists', (req, res) => {
     let exists = false
-    const dir = `${process.cwd()}/Client`
+    const dir = `${basePath}\\Client\\`
     // check if directory exists
     if (fs.existsSync(dir)) {
         exists = true
@@ -37,9 +42,9 @@ app.get('/clientExists', (req, res) => {
 
 app.get('/constructLocalTree', async (req, res) => {
     let tree = (await execa('../modules/node-folder-hash/bin/folder-hash', [
-        `../src-tauri/Client`
+        `${basePath}\\Client\\`
     ])).stdout
-    fs.writeFileSync(`localMerkle.json`, tree, "utf-8");
+    // fs.writeFileSync(`localMerkle.json`, tree, "utf-8");
     res.status(200).json({ tree })
 })
 

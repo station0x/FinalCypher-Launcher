@@ -13,7 +13,10 @@ const store = createStore({
     state: {
         user: window.localStorage.getItem('user'),
         isVerified: false,
-        gameMerkleTree: undefined
+        gameMerkleTree: undefined,
+        clientTotalSize: undefined,
+        clientTotalDownloaded: undefined,
+        isDownloading: false
     },
     mutations: {
         // SET_LOGGED_IN(state, value) {
@@ -27,6 +30,12 @@ const store = createStore({
         },
         SET_MERKLE_TREE(state, tree) {
             state.gameMerkleTree = tree
+        },
+        SET_TOTAL_SIZE(state, totalSize) {
+            state.clientTotalSize = totalSize
+        },
+        SET_TOTAL_DOWNLOADED(state, totalDownloaded) {
+            state.clientTotalDownloaded = totalDownloaded
         }
     },
     getters: {

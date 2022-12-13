@@ -46,8 +46,14 @@
                 <!-- </div> -->
             </div>              
         </div>
-        <div id="main-footer" class="flex w-screen h-1/6 justify-left items-center">
+        <!-- <div id="main-footer" class="flex w-screen h-1/6 justify-left items-center">
             <PlayBtn @click="openFC" />
+        </div> -->
+        <div id="main-footer" class="w-full h-1/6">
+             <!-- <PlayBtn @click="openFC" /> -->
+             <InstallProgress :percent="8"/>
+            <!-- <div class="bg-brand-cold relative top-0 bg-opacity-30 text-xs font-medium text-blue-100 text-center h-full animate-pulse" style="width: 25%"></div> -->
+            <!-- <div class="text-xs font-medium text-blue-100 text-left p-0.5" style="width: 100%"> 25%</div> -->
         </div>
         <!-- Dropdown -->
         <div id="dropdownAvatarName" class="absolute top-16  right-20 z-10 w-44 bg-white rounded divide-y divide-neutral-200 shadow dark:bg-neutral-800 dark:divide-neutral-700">
@@ -78,6 +84,7 @@ import { appWindow } from '@tauri-apps/api/window'
 import { Command } from '@tauri-apps/api/shell'
 import { auth } from '../../../firebaseConfig'
 import PlayBtn from '../../components/PlayBtn.vue'
+import InstallProgress from '../../components/InstallProgress.vue'
 // import { getAuth } from '@firebase/auth'
 
 export default {
@@ -90,7 +97,8 @@ export default {
         }
     },
     components: {
-        PlayBtn
+        PlayBtn,
+        InstallProgress
     },
     computed: {
         user() {
