@@ -1,10 +1,12 @@
 // 6210-6221 unassigned ports
+require('dotenv').config()
 const http = require("http");
 const WebSocket = require("ws");
 let app = require('./http-server.cjs');
 var request = require('request');
 var progress = require('request-progress');
 const { Octokit } = require("@octokit/rest");
+const path = require('node:path');
 const octokit = new Octokit()
 
 const serverPort = 6212;
@@ -12,6 +14,9 @@ const websocketPort = 6213;
 const server = http.createServer();
 const websocketServer = new WebSocket.Server({ server });
 const Downloader = require("nodejs-file-downloader");
+
+let basePath = process.env.MODE ? process.cwd() : path.resolve(process.cwd() + '\\..\\src-tauri\\')
+
 // server.on('request', app);
 
 websocketServer.on("connection", (webSocketClient) => {
@@ -23,6 +28,7 @@ websocketServer.on("connection", (webSocketClient) => {
                 let assets = (await getClientReleaseAssets()).data.assets
                 let totalSize = 0
                 let assetsURL = []
+                let time = Date.now()
                 for(let asset in assets) {
                     totalSize += assets[asset].size
                     let assetArr = []
@@ -34,21 +40,23 @@ websocketServer.on("connection", (webSocketClient) => {
                 let totalDownloaded = 0
                 let totalSwap = 0
                 for(let asset in assetsURL) {
-                    // some crazy fucking string manipulation to format name and path
+                    // some crazy fucking string manipulation to format name and pathX
                     let url = assetsURL[asset][0]
                     let name = assetsURL[asset][1]
                     let size = assetsURL[asset][2]
                     name = name.split('@').join('\\')
-                    let path = `${process.cwd()}\\Client\\${name}`
+                    // let basePath = process.cwd() ====================> production
+                    let pathX = `${basePath}\\Client\\${name}`
+                    console.log(pathX)
                     name = name.split('\\')
                     name = name[name.length-1]
-                    path = path.split('\\')
-                    path.pop()
-                    path = path.join('\\')
+                    pathX = pathX.split('\\')
+                    pathX.pop()
+                    pathX = pathX.join('\\')
                     let fileDownloaded = 0
                     const downloader = new Downloader({
                         url,
-                        directory: path,
+                        directory: pathX,
                         fileName: name,
                         cloneFiles: false,
                         maxAttempts: 3, // failed download repeats
@@ -59,14 +67,18 @@ websocketServer.on("connection", (webSocketClient) => {
                                 fileDownloaded = (size - remainingSize)
                                 totalSwap = fileDownloaded
                             }
-                            console.table(["size", size], ["remainingSize", remainingSize], ["fileDownloaded", fileDownloaded], ["totalSwap", totalSwap])
-                            //Gets called with each chunk.
-                            console.log("% ", percentage);
-                            console.log("Current chunk of data: ", chunk);
-                            console.log("Remaining bytes: ", remainingSize);
-
-
-                            webSocketClient.send(JSON.stringify({ totalSize, totalDownloaded }))
+                            let now = Date.now()
+                            if(now - time > 1000) {
+                                console.log('time now is ', now)
+                                console.table(["size", size], ["remainingSize", remainingSize], ["fileDownloaded", fileDownloaded], ["totalSwap", totalSwap])
+                                //Gets called with each chunk.
+                                console.log("% ", percentage);
+                                console.log("Current chunk of data: ", chunk);
+                                console.log("Remaining bytes: ", remainingSize);
+                                webSocketClient.send(JSON.stringify({ totalSize, totalDownloaded }))
+                                time = now
+                            }
+                            
                         },
                         onError: function (error) {
                             console.log("Error from attempt ", error);
@@ -79,10 +91,8 @@ websocketServer.on("connection", (webSocketClient) => {
                     }
                 }
                 webSocketClient.send(JSON.stringify({ assetsURL, totalSize }))
-            // setInterval(() => {
-            //   let time = new Date();
-            //   webSocketClient.send("The time is: " + time.toTimeString() + ' --- ' + process.cwd());
-            // }, 1000);
+            } else if(message == 'updateClient') {
+                
             }
     });
 
