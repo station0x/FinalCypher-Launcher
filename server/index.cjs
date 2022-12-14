@@ -1,13 +1,16 @@
 // 6210-6221 unassigned ports
 require('dotenv').config()
-const http = require("http");
-const WebSocket = require("ws");
 let app = require('./http-server.cjs');
-var request = require('request');
-var progress = require('request-progress');
+const WebSocket = require("ws");
+
 const { Octokit } = require("@octokit/rest");
-const path = require('node:path');
 const octokit = new Octokit()
+
+const path = require('path');
+const os = require("os");
+const fs = require('fs');
+const http = require("http");
+
 
 const serverPort = 6212;
 const websocketPort = 6213;
@@ -15,9 +18,13 @@ const server = http.createServer();
 const websocketServer = new WebSocket.Server({ server });
 const Downloader = require("nodejs-file-downloader");
 
-let basePath = process.cwd() //====================> production
-// let basePath = process.env.MODE ? process.cwd() : path.resolve(process.cwd() + '\\..\\')
-// server.on('request', app);
+const root = (os.platform == "win32") ? process.cwd().split(path.sep)[0] : "/"
+const szxDir = root + `\\Station Zero X Games`
+const fcDir = szxDir + `\\FinalCypher`
+
+if(!fs.existsSync(szxDir)) {
+    fs.mkdirSync(szxDir, { recursive: true });
+}
 
 websocketServer.on("connection", (webSocketClient) => {
     console.log(`Client connected at ${new Date}`)
@@ -25,6 +32,7 @@ websocketServer.on("connection", (webSocketClient) => {
     webSocketClient.on('message', async (message) => {
             message = "" + message // weird, but works!
             if(message == 'downloadClient') {
+                console.log('downloadClient')
                 let assets = (await getClientReleaseAssets()).data.assets
                 let totalSize = 0
                 let assetsURL = []
@@ -46,7 +54,7 @@ websocketServer.on("connection", (webSocketClient) => {
                     let size = assetsURL[asset][2]
                     name = name.split('@').join('\\')
                     // let basePath = process.cwd() ====================> production
-                    let pathX = `${basePath}\\Client\\${name}`
+                    let pathX = `${fcDir}\\${name}`
                     console.log(pathX)
                     name = name.split('\\')
                     name = name[name.length-1]

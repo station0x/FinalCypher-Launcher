@@ -1,17 +1,21 @@
 'use strict';
 require('dotenv').config()
-const { hashElement } = require('folder-hash');
+const { hashElement } = require('./folder-hash.cjs')
 let express = require('express');
 var cors = require('cors')
+
 const { Octokit } = require("@octokit/rest");
 const octokit = new Octokit()
+
 const fs = require('fs');
-const path = require('node:path');
+const path = require('path');
+const os = require("os");
 const https = require('https')
 const { execa, execaNode } = require("execa");
 
-let basePath = process.cwd() //====================> production
-// let basePath = process.env.MODE ? process.cwd() : path.resolve(process.cwd() + '\\..\\')
+const root = (os.platform == "win32") ? process.cwd().split(path.sep)[0] : "/"
+const szxDir = root + `\\Station Zero X Games`
+const fcDir = szxDir + `\\FinalCypher`
 
 let app = express();
 app.use(cors({
@@ -26,44 +30,36 @@ app.get('/', (req, res) => {
     return res.status(200).json({ success: true })
 });
 
-app.get('/cwd', (req, res) => {
-    res.status(200).json({ cwd: process.cwd() })
+app.get('/szxDir', async (req, res) => {
+    if(!fs.existsSync(szxDir)) {
+        fs.mkdirSync(szxDir, { recursive: true });
+    }
+    res.status(200).json({ szxDir })
 })
 
 app.get('/clientExists', (req, res) => {
+    console.log('/clientExists')
     let exists = false
-    const dir = `${basePath}\\Client\\`
-    // check if directory exists
-    if (fs.existsSync(dir)) {
+    if (fs.existsSync(fcDir)) {
         exists = true
     }
     return res.status(200).json({ exists })
 })
 
-app.get('/getTree', async (req, res) => {
-    // let success = false
-    // let tree = {}
-    // const dir = `${basePath}\\Client`
-    // if (fs.existsSync(dir)) {
-    //     success = true
-    //     tree = (await execa('../modules/node-folder-hash/bin/folder-hash', [
-    //         `${basePath}\\Client`
-    //     ])).stdout
-    // }
-    // let binary = path.resolve(process.cwd() + '\\..\\modules\\node-folder-hash\\bin\\folder-hash')
-    // path = path.split('\\').join('/')
-    
+app.get('/getClientTree', async (req, res) => {    
     try {
         // let path = process.cwd()
         // path.split('\\').join('/')
         // basePath = basePath.split('\\').join('/')
         // binary = binary.split('\\').join('/')
-        let { stdout } = await execa('modules/node-folder-hash/bin/folder-hash', [
-            `${basePath}/Client`
-        ])
-        console.log(stdout)
+        // let { stdout } = await execa('../modules/node-folder-hash/bin/folder-hash', [
+        //     fcDir
+        // ])
+        // console.log(stdout)
         // console.log(`${basePath}/modules/node-folder-hash/bin/folder-hash`, `${basePath}/Client/`)
-        res.status(200).json({ tree: stdout })
+            // Constructing Local Merkle Tree
+        let merkleTree = await constructMerkleTree()
+        res.status(200).json({ exists: true, cwd: process.cwd(), tree: merkleTree })
     } catch(err) {
         console.log(err)
         res.status(200).json({ success: false, err, binary })
@@ -153,6 +149,10 @@ async function getReleaseAsset(asset_id) {
         repo: 'FC-Client-Binaries',
         asset_id
     }))
+}
+
+async function constructMerkleTree() {
+    return hashElement(fcDir)
 }
 
 module.exports = app;
