@@ -36,3 +36,6 @@ src-tauri/**/*.txt
 
 # Root Client
 Client
+
+*.env
+.env

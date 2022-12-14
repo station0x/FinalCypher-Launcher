@@ -6,7 +6,6 @@
       <div>
         <Titlebar v-if="isApp"/>
         <h2 style="color: red" class="bg-neutral-800">{{time}}</h2>
-        <h2 style="color: red" class="bg-neutral-800">{{gameTree}}</h2>
         <h2 style="color: red" class="bg-neutral-800">{{wsError}}</h2>
         <h2 style="color: red" class="bg-neutral-800">{{logs}}</h2>
         <router-view></router-view>
@@ -53,7 +52,7 @@
     import Loader from "./components/Loader.vue"
     import { sendEmailVerification } from 'firebase/auth'
     import { mapGetters } from "vuex"
-    import { localDataDir, resourceDir, appLocalDataDir, appDataDir } from '@tauri-apps/api/path'
+    import { appCacheDir } from '@tauri-apps/api/path';
     // import { readDir, BaseDirectory, exists, readBinaryFile } from "@tauri-apps/api/fs"
     import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
     import { listen, TauriEvent } from "@tauri-apps/api/event";
@@ -79,7 +78,6 @@
             logs: '',
             totalSize: 1000,
             totalDownloaded: 500,
-            gameTree: undefined,
             isApp: true,
             connection: undefined,
             downloadSize: undefined,
@@ -139,16 +137,47 @@
       },
       async mounted() {
             this.connection = new WebSocket('ws://localhost:6213/');
+            // get local cache directory 
+            const appCacheDirPath = await appCacheDir()
+
             this.connection.onopen = async () => {
                 console.log('WS connected and opened.')
                 let clientExists = (await axios.get('http://localhost:6212/clientExists')).data.exists
                 if(!clientExists){
-                    this.connection.send('downloadClient');
+                    this.connection.send(JSON.stringify({ 
+                      message: 'downloadClient',
+                      cacheDir: appCacheDirPath
+                     }));
                 } else {
                     try {
-                      let tree = (await axios.get('http://localhost:6212/getClientTree'))
-                      this.gameTree = tree
-                      console.log(tree)
+                      let { synced, 
+                        remoteMapping, 
+                        assetsMapping, 
+                        localDiffs, 
+                        releaseAssets,
+                        remoteBatchVersion
+                       } = (await axios.get('http://localhost:6212/IsSynced')).data
+
+                      console.log({ synced, 
+                      remoteMapping, 
+                      assetsMapping, 
+                      localDiffs, 
+                      releaseAssets })
+
+                      if(synced) {
+                        console.log(synced)
+                      } else {
+                        console.log(this.connection)
+                        this.connection.send(JSON.stringify({ 
+                          message: 'updateClient',
+                          remoteMapping, 
+                          assetsMapping, 
+                          localDiffs, 
+                          releaseAssets,
+                          cacheDir: appCacheDirPath,
+                          remoteBatchVersion
+                         }))
+                      }
                     } catch(err) {
                       console.log(err)
                     }
@@ -158,8 +187,14 @@
             // this.connection.send('updateC')
             this.connection.onmessage = async (event) => {
                 let message = JSON.parse(event.data);
+                // console.log(message)
                 this.$store.commit('SET_TOTAL_SIZE', message.totalSize)
                 this.$store.commit('SET_TOTAL_DOWNLOADED', message.totalDownloaded)
+                this.$store.commit('SET_UPDATING', message.isUpdating)
+                this.$store.commit('SET_DOWNLOADING_FILENAME', message.name)
+                this.$store.commit('SET_FC_DIR_SIZE', message.dirSize)
+                this.$store.commit('SET_READY_TO_PLAY', message.readyToPlay)
+
                 this.time = `${this.formatBytes(message.totalDownloaded)} / ${this.formatBytes(message.totalSize)}`
                 if(message.error) this.wsError = message.error
             }
@@ -193,7 +228,7 @@
         cmd.spawn().then((child) => {
             console.log(child.pid)
             listen(TauriEvent.WINDOW_DESTROYED, function () {
-                child.kill();
+              child.kill();
             })
         });
         // cmd.addListener("close", function() {

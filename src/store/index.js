@@ -16,7 +16,11 @@ const store = createStore({
         gameMerkleTree: undefined,
         clientTotalSize: undefined,
         clientTotalDownloaded: undefined,
-        isDownloading: false
+        isDownloading: false,
+        isUpdating: false,
+        downloadingFilename: '',
+        fcDirSize: 0,
+        readyToPlay: false
     },
     mutations: {
         // SET_LOGGED_IN(state, value) {
@@ -36,6 +40,18 @@ const store = createStore({
         },
         SET_TOTAL_DOWNLOADED(state, totalDownloaded) {
             state.clientTotalDownloaded = totalDownloaded
+        },
+        SET_UPDATING(state, isUpdating) {
+            state.isUpdating = isUpdating
+        },
+        SET_DOWNLOADING_FILENAME(state, filename) {
+            state.downloadingFilename = filename
+        },
+        SET_FC_DIR_SIZE(state, size) {
+            state.fcDirSize = size
+        },
+        SET_READY_TO_PLAY(state, bool) {
+            state.readyToPlay = bool
         }
     },
     getters: {

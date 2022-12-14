@@ -3,15 +3,16 @@ require('dotenv').config()
 const { hashElement } = require('./folder-hash.cjs')
 let express = require('express');
 var cors = require('cors')
+const { traverse } = require('object-traversal')
 
 const { Octokit } = require("@octokit/rest");
-const octokit = new Octokit()
+const octokit = new Octokit({ auth: process.env.FAKE_PAT })
+const WebSocket = require('ws');
 
 const fs = require('fs');
 const path = require('path');
 const os = require("os");
 const https = require('https')
-const { execa, execaNode } = require("execa");
 
 const root = (os.platform == "win32") ? process.cwd().split(path.sep)[0] : "/"
 const szxDir = root + `\\Station Zero X Games`
@@ -48,50 +49,59 @@ app.get('/clientExists', (req, res) => {
 
 app.get('/getClientTree', async (req, res) => {    
     try {
-        // let path = process.cwd()
-        // path.split('\\').join('/')
-        // basePath = basePath.split('\\').join('/')
-        // binary = binary.split('\\').join('/')
-        // let { stdout } = await execa('../modules/node-folder-hash/bin/folder-hash', [
-        //     fcDir
-        // ])
-        // console.log(stdout)
-        // console.log(`${basePath}/modules/node-folder-hash/bin/folder-hash`, `${basePath}/Client/`)
-            // Constructing Local Merkle Tree
         let merkleTree = await constructMerkleTree()
-        res.status(200).json({ exists: true, cwd: process.cwd(), tree: merkleTree })
+        res.status(200).json({ tree: merkleTree })
     } catch(err) {
         console.log(err)
-        res.status(200).json({ success: false, err, binary })
+        res.status(200).json({ success: false, err })
     }
     // fs.writeFileSync(`localMerkle.json`, tree, "utf-8");
 })
 
-// app.get('/isSynced', async (req, res)  => {
-//     // Get Release Assets IDs 
-//     let respArray = await Promise.all([
-//         hashElement('../src-tauri/Windows'),
-//         getClientReleaseAssets()
-//     ])
-//     let latestReleaseData = respArray[1]
-//     let releaseAssets = latestReleaseData.data.assets
-//     let releaseId = latestReleaseData.data.id
-//     let assetsMapping = {}
-//     for (let asset in releaseAssets) {
-//         assetsMapping[`${releaseAssets[asset].name}`] = releaseAssets[asset].id
-//     }
-//     // Downloading Remote Merkle Tree  and Read to memory
-//     let remoteMerkleTreeURL = (await getReleaseAsset(assetsMapping['merkle.json'])).data.browser_download_url
-//     await download(remoteMerkleTreeURL, `${process.cwd()}/remoteMerkle.json`)
-//     let remoteTree = JSON.parse(fs.readFileSync(`${process.cwd()}/remoteMerkle.json`, "utf8"))
-//     let localTree = respArray[0]
-//     // Comparing Local with Remote master hashes
-//     let remoteMasterHash = remoteTree.hash
-//     let localMasterHash = localTree.hash
-//     let synced = false
-//     if(remoteMasterHash === localMasterHash) synced = true
-//     return res.json({ synced })
-// })
+
+app.get('/isSynced', async (req, res)  => {
+    // Get Release Assets IDs 
+    let respArray = await Promise.all([
+        constructMerkleTree(),
+        getClientReleaseAssets()
+    ])
+    let latestReleaseData = respArray[1]
+    let remoteBatchVersion = latestReleaseData.data.name
+    let releaseAssets = latestReleaseData.data.assets
+    
+    // let releaseId = latestReleaseData.data.id
+    let assetsMapping = {}
+    for (let asset in releaseAssets) {
+        assetsMapping[`${releaseAssets[asset].name}`] = releaseAssets[asset].id
+    }
+
+    // Downloading Remote Merkle Tree  and Read to memory
+    let remoteMerkleTreeURL = (await getReleaseAsset(assetsMapping['merkle.json'])).data.browser_download_url
+
+    await download(remoteMerkleTreeURL, `${process.cwd()}/remoteMerkle.json`)
+    let remoteTree = JSON.parse(fs.readFileSync(`${process.cwd()}/remoteMerkle.json`, "utf8"))
+    fs.unlinkSync(`${process.cwd()}/remoteMerkle.json`)
+
+    let localTree = respArray[0]
+
+    // Comparing Local with Remote master hashes
+    let remoteMasterHash = remoteTree.hash
+    let localMasterHash = localTree.hash
+    let synced = false
+    if(remoteMasterHash === localMasterHash) {
+        synced = true
+        return res.json({ synced })
+    } else {
+        let { mapping: remoteMapping, hashes: remoteHashes, names: remoteNames } = traverseTree(remoteTree)
+        let { mapping: localMapping, hashes: localHashes, names: localNames } = traverseTree(localTree)
+
+        let localDiffs = remoteHashes
+        .filter(val => !localHashes.includes(val));
+        
+        // syncClient({ remoteMapping, assetsMapping, localDiffs, releaseAssets })
+        return res.json({ synced, remoteMapping, assetsMapping, localDiffs, releaseAssets, remoteBatchVersion })
+    }
+})
 
 /*
 * Internal Functions
@@ -154,5 +164,54 @@ async function getReleaseAsset(asset_id) {
 async function constructMerkleTree() {
     return hashElement(fcDir)
 }
+
+function traverseTree(tree) {
+    let mapping = {}
+    let hashes = []
+    let names = []
+    function getMapping({ parent, key, value, meta }) {
+        if (value.name && value.name.includes('.')) {
+            let ancestors = meta.nodePath.split('.')
+            ancestors = ancestors
+            .filter(v => {
+                if(!/^\d+$/.test(v)) return v
+            })
+            .map((v) => {
+                return v.split('@')[0]
+            })
+            .filter(val => val !== 'FCWindowsClient')
+            .join('@')
+
+            let name = ancestors ? ancestors + '@' + value.name : value.name
+            names.push(name)
+            mapping[`${value.hash}`] = name
+            hashes.push(value.hash)
+        }
+    }
+    traverse(tree, getMapping, { traversalType: 'breadth-first' });
+    return {mapping, hashes, names}
+}
+
+function syncClient({ remoteMapping, assetsMapping, localDiffs, releaseAssets }) {
+    let connection = new WebSocket('ws://localhost:6213/');
+    connection.onopen = async () => {
+        console.log('Server Handshake initiated..')
+        connection.send(JSON.stringify({ 
+            message: 'downloadClient',
+        }));
+        // connection.send(JSON.stringify({ 
+        //     message: 'updateClient',
+        //     remoteMapping, 
+        //     assetsMapping, 
+        //     localDiffs,
+        //     releaseAssets
+        // }));
+    }
+    connection.onmessage = async (event) => {
+        let data = JSON.parse(event.data)
+        console.log(data)
+        }
+}
+
 
 module.exports = app;
