@@ -50,8 +50,8 @@
             <PlayBtn @click="openFC" />
         </div> -->
         <div id="main-footer" class="w-full h-1/6">
-             <!-- <PlayBtn @click="openFC" /> -->
-             <InstallProgress :percent="8"/>
+             <PlayBtn v-if="$store.state.readyToPlay" @click="openFC" />
+             <InstallProgress v-else/>
             <!-- <div class="bg-brand-cold relative top-0 bg-opacity-30 text-xs font-medium text-blue-100 text-center h-full animate-pulse" style="width: 25%"></div> -->
             <!-- <div class="text-xs font-medium text-blue-100 text-left p-0.5" style="width: 100%"> 25%</div> -->
         </div>
