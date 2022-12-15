@@ -79,8 +79,8 @@
                     </p>
                 </form>
                 <div class="h-full w-full flex flex-col gap-1 justify-end  mb-4 px-14 text-center">
-                    <div class="text-xs text-white text-opacity-20 tracking-normal hover:text-opacity-40">Launcher Version v{{ $store.state.launcherVersion }}</div>
-                    <div class="text-xs text-white text-opacity-20 tracking-normal hover:text-opacity-40">Client Version v{{ $store.state.clientVersion }}</div>
+                    <div v-if="$store.state.launcherVersion" class="text-xs text-white text-opacity-20 tracking-normal hover:text-opacity-40">Launcher Version v{{ $store.state.launcherVersion.split('v')[1] }}</div>
+                    <div v-if="$store.state.clientVersion" class="text-xs text-white text-opacity-20 tracking-normal hover:text-opacity-40">Client Version v{{ $store.state.clientVersion }}</div>
                 </div>
             </div> 
             <div id="right-section" class="flex items-center col-span-7 justify-center px-4 py-6 bg-primary-600 lg:py-0 sm:px-0">

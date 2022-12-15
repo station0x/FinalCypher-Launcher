@@ -29,7 +29,7 @@
         "all": true,
         "execute": true,
         "sidecar": true,
-        "open": true,
+        "open": "(.*?)",
         "scope": [
           {
             "name": "fc-start",
@@ -90,7 +90,7 @@
     },
     "updater": {
       "active": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEQ5M0JENkI0OUIyMjcxMDMKUldRRGNTS2J0Tlk3MlJnWU56NkRlQmdLd3duVDJWNUFiWDJVWStqOFNoMEt3L1ZqNUJ6eEtra04K",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEVFNDZCNUY1NTEwMjg2MUQKUldRZGhnSlI5YlZHN2hXUE1CWW1uRFpHSW5JN3Vib204MWJzNVVLUmN4SkthQWI4cnRIQmVMUmkK",
       "dialog": false,
       "endpoints": [
         "https://www.finalcypher.com/api/{{target}}/{{current_version}}"
