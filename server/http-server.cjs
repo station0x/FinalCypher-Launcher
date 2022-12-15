@@ -20,7 +20,7 @@ const fcDir = szxDir + `\\FinalCypher`
 
 let app = express();
 app.use(cors({
-    origin: ['http://localhost:1420', 'http://127.0.0.1:1420']
+    origin: ['http://localhost:1420', 'http://127.0.0.1:1420', 'https://tauri.localhost']
 }))
 // let bodyParser = require('body-parser');
 // app.use(bodyParser.json());
@@ -60,7 +60,9 @@ app.get('/getClientTree', async (req, res) => {
 
 
 app.get('/isSynced', async (req, res)  => {
-    // Get Release Assets IDs 
+    // Get Release Assets IDs
+    console.log('/isSynced')
+    let { cacheDir } = req.query
     let respArray = await Promise.all([
         constructMerkleTree(),
         getClientReleaseAssets()
@@ -78,9 +80,9 @@ app.get('/isSynced', async (req, res)  => {
     // Downloading Remote Merkle Tree  and Read to memory
     let remoteMerkleTreeURL = (await getReleaseAsset(assetsMapping['merkle.json'])).data.browser_download_url
 
-    await download(remoteMerkleTreeURL, `${process.cwd()}/remoteMerkle.json`)
-    let remoteTree = JSON.parse(fs.readFileSync(`${process.cwd()}/remoteMerkle.json`, "utf8"))
-    fs.unlinkSync(`${process.cwd()}/remoteMerkle.json`)
+    await download(remoteMerkleTreeURL, `${cacheDir}/remoteMerkle.json`)
+    let remoteTree = JSON.parse(fs.readFileSync(`${cacheDir}/remoteMerkle.json`, "utf8"))
+    fs.unlinkSync(`${cacheDir}/remoteMerkle.json`)
 
     let localTree = respArray[0]
 
