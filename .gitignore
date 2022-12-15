@@ -37,5 +37,10 @@ src-tauri/**/*.txt
 # Root Client
 Client
 
+# Env variables
 *.env
 .env
+
+# Signing keys
+~
+.key

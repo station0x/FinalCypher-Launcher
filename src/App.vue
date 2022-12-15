@@ -54,8 +54,9 @@
     import { mapGetters } from "vuex"
     import { appCacheDir } from '@tauri-apps/api/path';
     import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
-    import { listen, TauriEvent } from "@tauri-apps/api/event";
-    import { Command } from "@tauri-apps/api/shell";
+    import { relaunch } from '@tauri-apps/api/process'
+    import { listen, TauriEvent } from "@tauri-apps/api/event"
+    import { Command } from "@tauri-apps/api/shell"
     import axios from 'axios'
 
   
@@ -73,6 +74,7 @@
             downloadSize: undefined,
             time: undefined,
             wsError: undefined,
+            shouldUpdate: undefined
           }
       },
       components: {
@@ -126,7 +128,8 @@
           }
       },
       async mounted() {
-            this.connection = new WebSocket('ws://localhost:6213/');
+        if(!this.shouldUpdate) {
+          this.connection = new WebSocket('ws://localhost:6213/');
             // get local cache directory 
             const appCacheDirPath = await appCacheDir()
 
@@ -168,15 +171,15 @@
                         this.$store.commit('SET_READY_TO_PLAY', true)
                       } else {
                         console.log(this.connection)
-                        this.connection.send(JSON.stringify({ 
-                          message: 'updateClient',
-                          remoteMapping, 
-                          assetsMapping, 
-                          localDiffs, 
-                          releaseAssets,
-                          cacheDir: appCacheDirPath,
-                          remoteBatchVersion
-                         }))
+                        // this.connection.send(JSON.stringify({ 
+                        //   message: 'updateClient',
+                        //   remoteMapping, 
+                        //   assetsMapping, 
+                        //   localDiffs, 
+                        //   releaseAssets,
+                        //   cacheDir: appCacheDirPath,
+                        //   remoteBatchVersion
+                        //  }))
                       }
                     } catch(err) {
                       console.log(err)
@@ -198,22 +201,39 @@
                 this.time = `${this.formatBytes(message.totalDownloaded)} / ${this.formatBytes(message.totalSize)}`
                 if(message.error) this.wsError = message.error
             }
+        }
 
-            const targetEl = this.$refs.verifyModal
-            const options = {
-                placement: 'center',
-                backdropClasses: 'bg-neutral-900 bg-opacity-50 dark:bg-opacity-70 fixed inset-0 z-40'
-            }
-            this.modal = new Modal(targetEl, options)
+        const targetEl = this.$refs.verifyModal
+        const options = {
+            placement: 'center',
+            backdropClasses: 'bg-neutral-900 bg-opacity-50 dark:bg-opacity-70 fixed inset-0 z-40'
+        }
+        this.modal = new Modal(targetEl, options)
     },
     async created() {
-        const cmd = Command.sidecar('binaries/fc-core');
-        cmd.spawn().then((child) => {
-            console.log(child.pid)
-            listen(TauriEvent.WINDOW_DESTROYED, function () {
-              child.kill();
+        try {
+          const { shouldUpdate, manifest } = await checkUpdate()
+          if (shouldUpdate) {
+            this.shouldUpdate = true
+            console.log(shouldUpdate)
+            console.log(manifest)
+            // display dialog
+            await installUpdate()
+            // install complete, restart the app
+            await relaunch()
+          } else {
+            const cmd = Command.sidecar('binaries/fc-core');
+            cmd.spawn().then((child) => {
+              console.log(child.pid)
+              listen(TauriEvent.WINDOW_DESTROYED, function () {
+                child.kill();
+              })
             })
-        })
+          }
+        } catch (error) {
+          console.log(error)
+        }
+
     }
 }
 </script>
