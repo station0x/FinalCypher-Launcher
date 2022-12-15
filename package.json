@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@angablue/exe": "^1.1.6",
-    "@tauri-apps/cli": "^1.2.1",
+    "@tauri-apps/cli": "^1.2.2",
     "@vitejs/plugin-vue": "^3.0.1",
     "autoprefixer": "^10.4.12",
     "chokidar": "^3.5.3",

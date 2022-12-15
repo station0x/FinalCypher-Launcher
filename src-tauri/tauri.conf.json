@@ -93,7 +93,7 @@
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEQ5M0JENkI0OUIyMjcxMDMKUldRRGNTS2J0Tlk3MlJnWU56NkRlQmdLd3duVDJWNUFiWDJVWStqOFNoMEt3L1ZqNUJ6eEtra04K",
       "dialog": false,
       "endpoints": [
-        "https://final-cypher-landing-isaaca-station0x.vercel.app/api/{{target}}/{{current_version}}"
+        "https://www.finalcypher.com/api/{{target}}/{{current_version}}"
       ]
     },
     "windows": [

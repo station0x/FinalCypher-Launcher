@@ -2,7 +2,7 @@
     <section class="bg-white dark:bg-neutral-900">
         <div class="grid h-screen grid-cols-10">
             <!-- Sign in -->
-            <div class="flex col-span-3 mt-28 items-center justify-center px-10 py-6 lg:py-0 sm:px-0">
+            <div class="flex flex-col col-span-3 mt-28 items-center justify-center px-10 py-6 lg:py-0 sm:px-0">
                 <form class="w-full px-14 max-w-md space-y-4 md:space-y-6 xl:max-w-xl" action="#">
                     <a href="#" class="flex top-16 absolute text-2xl font-semibold text-white">
                         <img class="w-[150px]" src="./../assets/img/fc.svg" />
@@ -78,6 +78,10 @@
                         Reset Password
                     </p>
                 </form>
+                <div class="h-full w-full flex flex-col gap-1 justify-end  mb-4 px-14 text-center">
+                    <div class="text-xs text-white text-opacity-20 tracking-normal hover:text-opacity-40">Launcher Version v{{ $store.state.launcherVersion }}</div>
+                    <div class="text-xs text-white text-opacity-20 tracking-normal hover:text-opacity-40">Client Version v{{ $store.state.clientVersion }}</div>
+                </div>
             </div> 
             <div id="right-section" class="flex items-center col-span-7 justify-center px-4 py-6 bg-primary-600 lg:py-0 sm:px-0">
                 <div class="max-w-md xl:max-w-xl">
@@ -99,13 +103,17 @@
                         </a> 
                     </div> -->
                 </div>
-            </div>              
+            </div>
+            <div class="absolute right-5 bottom-5">
+                <InstallProgress/>
+            </div>         
         </div>
     </section>
 </template>
 
 <script>
     import { auth } from '../../firebaseConfig'
+    import InstallProgress from '../components/InstallProgress.vue'
     import { 
         signInWithEmailAndPassword
     } from 'firebase/auth'
@@ -113,10 +121,13 @@
     data() {
         return {
             isSignIn: true,
-            email: 'mselrakabawi@gmail.com',
-            password: 'delete2013',
+            email: '',
+            password: '',
             loader: false
         };
+    },
+    components: {
+        InstallProgress
     },
     methods: {
         toggleAuth() {
