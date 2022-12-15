@@ -7,7 +7,7 @@ const { Octokit } = require("@octokit/rest");
 const octokit = new Octokit({ auth: process.env.FAKE_PAT })
 
 const du = require('du')
-
+const findRemoveSync = require('find-remove')
 const path = require('path');
 const os = require("os");
 const fs = require('fs');
@@ -188,7 +188,7 @@ websocketServer.on("connection", (webSocketClient) => {
                     pathX.pop()
                     pathX = pathX.join('\\')
                     let fileDownloaded = 0
-                    console.log(url)
+                    console.log(url, name)
                     const diffDownloader = new Downloader({
                         url,
                         directory: pathX,
@@ -228,7 +228,7 @@ websocketServer.on("connection", (webSocketClient) => {
                     
                     // console.log(diffDownloader)
                     try {
-                        await diffDownloader.download();
+                        // await diffDownloader.download();
                     } catch (error) {
                         console.log(error);
                         webSocketClient.send(JSON.stringify({ error }))

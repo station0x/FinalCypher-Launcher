@@ -46,7 +46,7 @@ app.get('/clientExists', (req, res) => {
     if (fs.existsSync(fcDir)) {
         exists = true
     }
-    return res.status(200).json({ exists })
+    return res.status(200).json({ exists, fcDir })
 })
 
 app.get('/getClientTree', async (req, res) => {    
