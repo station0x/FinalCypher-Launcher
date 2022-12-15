@@ -19,8 +19,14 @@ document.documentElement.classList.add('dark')
 
 // disable dev mode
 if(isProd) {
-    // disable right click
-    // document.addEventListener('contextmenu', event => event.preventDefault());
+    // disable conext-menu and reloads
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('keydown', (e) => {
+        e = e || window.event;
+        if(e.keyCode == 116 || (e.ctrlKey && e.keyCode == 82)){
+            e.preventDefault();
+        }
+    });
 }
 document.addEventListener('DOMContentLoaded', async () => {
     await invoke("close_splashscreen");

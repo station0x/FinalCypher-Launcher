@@ -5,9 +5,9 @@
       </div>
       <div>
         <Titlebar v-if="isApp"/>
-        <h2 style="color: red" class="bg-neutral-800">{{time}}</h2>
+        <!-- <h2 style="color: red" class="bg-neutral-800">{{time}}</h2>
         <h2 style="color: red" class="bg-neutral-800">{{wsError}}</h2>
-        <h2 style="color: red" class="bg-neutral-800">{{logs}}</h2>
+        <h2 style="color: red" class="bg-neutral-800">{{logs}}</h2> -->
         <router-view></router-view>
         <!-- verification modal -->
         <div v-show="user && !user.emailVerified" ref="verifyModal" id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 md:inset-0 h-modal md:h-full">
@@ -132,7 +132,12 @@
 
             this.connection.onopen = async () => {
                 console.log('WS connected and opened.')
+
                 let clientExists = (await axios.get('http://localhost:6212/clientExists')).data.exists
+                let { clientVersion, launcherVersion } = (await axios.get('http://localhost:6212/getVersions')).data
+                this.$store.commit('SET_CLIENT_VERSION', clientVersion)
+                this.$store.commit('SET_LAUNCHER_VERSION', launcherVersion)
+
                 // this.logs = clientExists
                 if(!clientExists){
                     this.connection.send(JSON.stringify({ 
@@ -208,7 +213,7 @@
             listen(TauriEvent.WINDOW_DESTROYED, function () {
               child.kill();
             })
-        });
+        })
     }
 }
 </script>

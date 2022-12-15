@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="grid grid-cols-1 gap-20 lg:grid-cols-2 lg:gap-10 ml-10">
+        <div class="grid grid-cols-1 gap-20 lg:gap-10 ml-10">
             <div :class="preparing ? 'w-60' : 'w-[420px]'" class="flex mt-7 items-center flex-wrap px-10 bg-neutral-900 shadow-xl rounded-full h-20">
                 <div class="flex items-center justify-center -m-6 overflow-hidden bg-neutral-800 rounded-full">
                     <svg class="w-16 h-16 transform translate-x-1 translate-y-1" x-cloak aria-hidden="true">

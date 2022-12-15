@@ -9,6 +9,8 @@ const { Octokit } = require("@octokit/rest");
 const octokit = new Octokit({ auth: process.env.FAKE_PAT })
 const WebSocket = require('ws');
 
+console.log(process.env.FAKE_PAT)
+
 const fs = require('fs');
 const path = require('path');
 const os = require("os");
@@ -56,6 +58,19 @@ app.get('/getClientTree', async (req, res) => {
         res.status(200).json({ success: false, err })
     }
     // fs.writeFileSync(`localMerkle.json`, tree, "utf-8");
+})
+
+app.get('/getVersions', async (req, res) => {
+    let respArray = await Promise.all([
+        getLauncherReleaseAssets(),
+        getClientReleaseAssets()
+    ])
+    let launcherVersion = respArray[0].data.name
+    let clientVersion = respArray[1].data.name
+    res.status(200).json({
+        launcherVersion,
+        clientVersion
+    })
 })
 
 
@@ -155,6 +170,13 @@ async function getClientReleaseAssets() {
     }))
 }
 
+async function getLauncherReleaseAssets() {
+    return (await octokit.rest.repos.getLatestRelease({
+        owner: 'station0x',
+        repo: 'FinalCypher-Launcher'
+    }))
+}
+
 async function getReleaseAsset(asset_id) {
     return (await octokit.rest.repos.getReleaseAsset({
         owner: 'station0x',
@@ -212,7 +234,7 @@ function syncClient({ remoteMapping, assetsMapping, localDiffs, releaseAssets })
     connection.onmessage = async (event) => {
         let data = JSON.parse(event.data)
         console.log(data)
-        }
+    }
 }
 
 

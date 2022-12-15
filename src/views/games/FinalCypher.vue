@@ -10,7 +10,7 @@
                     <img class="w-[300px]" src="./../../assets/img/fc.svg" />
                 </a>
             </div> 
-            <div id="right-section" class="flex col-span-3 items-center justify-center px-4 py-6 bg-primary-600 lg:py-0 sm:px-0">
+            <div class="flex col-span-3 items-center justify-center px-4 py-6 bg-primary-600 lg:py-0 sm:px-0">
                 <!-- <div class="max-w-md xl:max-w-xl"> -->
                     <div class="grid w-full h-screen grid-cols-10">
                         <div class="flex col-span-8"></div>

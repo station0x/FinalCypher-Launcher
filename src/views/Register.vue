@@ -2,8 +2,8 @@
     <section class="bg-white dark:bg-neutral-900">
         <div class="grid h-screen grid-cols-10">
             <!-- Create account -->
-            <div class="flex col-span-3 mt-20 px-10 items-center justify-center py-6 lg:py-0 sm:px-0">
-                <form class="w-full px-14 max-w-md space-y-4 md:space-y-6 xl:max-w-xl" action="#">
+            <div class="flex flex-col col-span-3 mt-20 px-10 items-center justify-center py-6 lg:py-0 sm:px-0">
+                <form class="w-full mt-10 px-14 max-w-md space-y-4 md:space-y-6 xl:max-w-xl" action="#">
                     <a href="#" class="flex top-16 absolute text-2xl font-semibold text-white">
                         <img class="w-[150px]" src="./../assets/img/fc.svg" />
                     </a>
@@ -66,6 +66,10 @@
                         Already a user? <span  @click="toggleAuth()" class="ml-1 font-Konnect cursor-pointer hover:dark:text-brand-cold capitalize text-neutral-500 dark:text-white">Sign In</span>
                     </p>
                 </form>
+                <div class="h-full w-full flex flex-col gap-1 justify-end  mb-4 px-14 text-center">
+                    <div class="text-xs text-white text-opacity-20 tracking-normal hover:text-opacity-40">Launcher Version v{{ $store.state.launcherVersion }}</div>
+                    <div class="text-xs text-white text-opacity-20 tracking-normal hover:text-opacity-40">Client Version v{{ $store.state.clientVersion }}</div>
+                </div>
             </div> 
             <div id="right-section" class="flex col-span-7 items-center justify-center px-4 py-6 bg-primary-600 lg:py-0 sm:px-0">
                 <div class="max-w-md xl:max-w-xl">
@@ -87,13 +91,17 @@
                         </a> 
                     </div> -->
                 </div>
-            </div>              
+            </div> 
+            <div class="absolute right-5 bottom-5">
+                <InstallProgress/>
+            </div>                
         </div>
     </section>
 </template>
 
 <script>
 import { auth } from '../../firebaseConfig'
+import InstallProgress from '../components/InstallProgress.vue'
 import { 
     createUserWithEmailAndPassword, 
     signOut, 
@@ -105,9 +113,9 @@ import {
        data() {
         return {
             isSignIn: true,
-            name:'elrakabawi',
-            email:'mselrakabawi@gmail.com',
-            password:'delete2013',
+            name:'',
+            email:'',
+            password:'',
             loader: false
         }
        },
@@ -139,7 +147,10 @@ import {
         //     if(this.$store.state.stateLoading) return this.$store.state.stateLoading
         //     else return false
         // }
-       }
+       },
+       components: {
+            InstallProgress
+        },
     }
 </script>
 

@@ -21,7 +21,9 @@ const store = createStore({
         downloadingFilename: '',
         fcDirSize: 0,
         readyToPlay: false,
-        clicked: 0
+        clicked: 0,
+        clientVersion: undefined,
+        launcherVersion: undefined
     },
     mutations: {
         // SET_LOGGED_IN(state, value) {
@@ -57,6 +59,12 @@ const store = createStore({
         clicked(state, n) {
             if(n === 0) state.clicked = n
             else state.clicked += 1  
+        },
+        SET_CLIENT_VERSION(state, version) {
+            state.clientVersion = version
+        },
+        SET_LAUNCHER_VERSION(state, version) {
+            state.launcherVersion = version
         }
     },
     getters: {
