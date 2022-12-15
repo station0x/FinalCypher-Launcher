@@ -20,7 +20,8 @@ const store = createStore({
         isUpdating: false,
         downloadingFilename: '',
         fcDirSize: 0,
-        readyToPlay: false
+        readyToPlay: false,
+        clicked: 0
     },
     mutations: {
         // SET_LOGGED_IN(state, value) {
@@ -52,6 +53,10 @@ const store = createStore({
         },
         SET_READY_TO_PLAY(state, bool) {
             state.readyToPlay = bool
+        },
+        clicked(state, n) {
+            if(n === 0) state.clicked = n
+            else state.clicked += 1  
         }
     },
     getters: {

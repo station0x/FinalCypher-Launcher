@@ -16,7 +16,7 @@
                         <div class="flex col-span-8"></div>
                         <div class="grid grid-rows-10 gap-4 col-span-2 justify-center">
                             <div class="row-span-1 self-start relative top-16">
-                                <div class="cursor-pointer hover:bg-neutral-700 w-[45px] h-[45px] bg-neutral-800 rounded-lg p-2.5">
+                                <div @click="toggleDropdown" class="cursor-pointer hover:bg-neutral-700 w-[45px] h-[45px] bg-neutral-800 rounded-lg p-2.5">
                                     <svg class="text-neutral-400 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
                                 </div>
                             </div>
@@ -56,13 +56,13 @@
             <!-- <div class="text-xs font-medium text-blue-100 text-left p-0.5" style="width: 100%"> 25%</div> -->
         </div>
         <!-- Dropdown -->
-        <div id="dropdownAvatarName" class="absolute top-16  right-20 z-10 w-44 bg-white rounded divide-y divide-neutral-200 shadow dark:bg-neutral-800 dark:divide-neutral-700">
-            <div class="py-3 px-4 text-sm text-neutral-900 dark:text-neutral-400">
+        <div :class="isDropdownOpen ? '' : 'hidden'" class="absolute top-16  right-20 z-10 w-44 bg-white rounded divide-y divide-neutral-200 shadow dark:bg-neutral-800 dark:divide-neutral-700">
+            <div class="py-3 px-4 text-sm uppercase text-neutral-900 dark:text-neutral-400">
             <div class="truncate">{{ user.displayName }}</div>
             </div>
             <ul class="text-sm tracking-wide text-neutral-700 dark:text-neutral-400" aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton">
             <li>
-                <a class="block cursor-pointer py-2.5 px-4 hover:bg-neutral-100 dark:hover:bg-neutral-700  dark:hover:text-white">Report a bug</a>
+                <a class="block cursor-pointer uppercase py-2.5 px-4 hover:bg-neutral-100 dark:hover:bg-neutral-700  dark:hover:text-white">Report a bug</a>
             </li>
             <!-- <li>
                 <a href="#" class="block py-2 px-4 hover:bg-neutral-100 dark:hover:bg-[rgba(0,0,0,.15)] dark:hover:text-white">Settings</a>
@@ -72,8 +72,8 @@
             </li> -->
             </ul>
             <div class="">
-            <a @click="signOut" class="block cursor-pointer py-2.5 px-4 text-sm text-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700  dark:text-neutral-400 dark:hover:text-white">Sign out</a>
-            <a @click="close" class="block cursor-pointer py-2.5 px-4 text-sm text-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700  dark:text-neutral-400 dark:hover:text-white">Exit</a>
+            <a @click="signOut" class="block cursor-pointer py-2.5 px-4 uppercase text-sm text-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700  dark:text-neutral-400 dark:hover:text-white">Sign out</a>
+            <a @click="close" class="block cursor-pointer py-2.5 px-4 uppercase text-sm text-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700  dark:text-neutral-400 dark:hover:text-white">Exit</a>
             </div>
         </div>
     </section>
@@ -93,7 +93,8 @@ export default {
             backgrounds: [
                 "atropa",
                 "zodwa"
-            ]
+            ],
+            isDropdownOpen: false
         }
     },
     components: {
@@ -103,7 +104,10 @@ export default {
     computed: {
         user() {
             if(this.$store.state.user) return this.$store.state.user
-        }
+        },
+        clicks() {
+            return this.$store.state.clicked
+        },
     },
     methods: {
         signOut() {
@@ -125,8 +129,33 @@ export default {
             }).catch(function(error) {
                 console.log(error)
             });
+        },
+        toggleDropdown() {
+                if(this.isDropdownOpen) {
+                    this.isDropdownOpen = false
+                } else {
+                    this.isDropdownOpen = true
+                    this.$store.commit("clicked", 0)
+                }
+            },
+        onClickApp() {
+            this.$store.commit("clicked")                
+        },
+        zeroClicks() {
+            this.$store.commit("clicked", 0) 
         }
-    }
+    },
+    watch: {
+        clicks() {
+            if(this.isDropdownOpen && this.$store.state.clicked === 2) this.isDropdownOpen = false
+        }
+    },
+    created() {
+        window.addEventListener('click', this.onClickApp)
+    },
+    destroyed() {
+        window.removeEventListener('click', this.onClickApp)
+    },
 }
 
 </script>

@@ -53,21 +53,11 @@
     import { sendEmailVerification } from 'firebase/auth'
     import { mapGetters } from "vuex"
     import { appCacheDir } from '@tauri-apps/api/path';
-    // import { readDir, BaseDirectory, exists, readBinaryFile } from "@tauri-apps/api/fs"
     import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
     import { listen, TauriEvent } from "@tauri-apps/api/event";
     import { Command } from "@tauri-apps/api/shell";
-    // import { appDataDir, appLocalDataDir } from '@tauri-apps/api/path';
-    // import { getClient, ResponseType } from "@tauri-apps/api/http";
     import axios from 'axios'
 
-    // import 'filehash';
-    // var { hashElement } = require('folder-hash')
-    // const child = await command.spawn();
-    // await child.write('message');
-    // await child.write([0, 1, 2, 3, 4, 5]);
-    // Reads the `Desktop` directory recursively
-    // const downloadDirPath = await downloadDir();
   
     export default {
       data() {
@@ -143,11 +133,12 @@
             this.connection.onopen = async () => {
                 console.log('WS connected and opened.')
                 let clientExists = (await axios.get('http://localhost:6212/clientExists')).data.exists
+                // this.logs = clientExists
                 if(!clientExists){
                     this.connection.send(JSON.stringify({ 
                       message: 'downloadClient',
                       cacheDir: appCacheDirPath
-                     }));
+                    }));
                 } else {
                     try {
                       let { synced, 
@@ -156,7 +147,11 @@
                         localDiffs, 
                         releaseAssets,
                         remoteBatchVersion
-                       } = (await axios.get('http://localhost:6212/IsSynced')).data
+                       } = (await axios.get('http://localhost:6212/isSynced', {
+                        params: {
+                          cacheDir: appCacheDirPath
+                        }
+                       })).data
 
                       console.log({ synced, 
                       remoteMapping, 
@@ -205,23 +200,6 @@
                 backdropClasses: 'bg-neutral-900 bg-opacity-50 dark:bg-opacity-70 fixed inset-0 z-40'
             }
             this.modal = new Modal(targetEl, options)
-  
-  
-            //     const resourceDirPath = await resourceDir();
-            //     this.logs = resourceDirPath
-        
-            //     try {
-            //         const { shouldUpdate, manifest } = await checkUpdate()
-            //         // console.log(shouldUpdate, manifest)
-            //         // if (shouldUpdate) {
-            //         //   // display dialog
-            //         //   await installUpdate()
-            //         //   // install complete, restart the app
-            //         //   await relaunch()
-            //         // }
-            //     } catch (error) {
-            //         console.log(error)
-            //     }
     },
     async created() {
         const cmd = Command.sidecar('binaries/fc-core');
@@ -231,41 +209,6 @@
               child.kill();
             })
         });
-        // cmd.addListener("close", function() {
-        //   cmd.spawn().then((child) => {
-        //       console.log(child.pid)
-        //       this.connection = new WebSocket('ws://localhost:6213/');
-        //       listen(TauriEvent.WINDOW_DESTROYED, function () {
-        //           child.kill();
-        //       })
-        //   });
-        // })
-
-        // axios.get('http://localhost:6212/isSynced').then((resp) => {
-        //   // self.$store.commit('SET_MERKLE_TREE', resp.data.hash)
-        //   console.log(resp)
-        // })
-
-
-        // if(clientExists) {
-
-        // } else {
-        //     this.connection.onopen = () => {
-        //         this.connection.send('downloadClient');
-        //     }
-        // }
-
-        //   const appLocalDataDirPath = await appLocalDataDir();
-        //   const appDataDirPath = await appDataDir();
-        // //   const BaseDirectoryPath = await BaseDirectory();
-        //   console.log(appLocalDataDirPath, appDataDirPath, resourceDirPath)
-
-            
-        // setTimeout(() => {
-        //   self.$router.push({ name: 'FinalCypher' })
-        //   self.isApp = true
-        // }, 7000)
-  
     }
 }
 </script>

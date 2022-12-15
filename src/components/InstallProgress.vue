@@ -49,7 +49,7 @@
                     <p class="ml-10 font-bold text-xl font-Konnect text-white text-opacity-90">{{ preparing ? 'Updating' : `${formatBytes(speed)} / s` }}</p>
                     <p v-if="!preparing" class="ml-10 font-normal text-sm tracking-wider font-Konnect text-white text-opacity-30 uppercase">{{ isUpdating ? 'Updating' : 'Installing' }}</p>
                 </div>
-                <span v-if="!preparing" class="ml-auto -mr-3 text-sm font-medium font-Konnect text-brand-cold-500">{{ secondsToHms(eta) }}</span>
+                <span v-if="!preparing" class="ml-auto -mr-3 text-base font-medium font-Konnect text-brand-cold-500">{{ secondsToHms(eta) }}</span>
             </div>
         </div>
    </div>
@@ -81,9 +81,9 @@ export default {
             return (this.speedFeed.reduce((pv, cv) => pv + cv, 0)/this.speedFeed.length)
         },
         eta() {
-            if(this.$store.state.clientTotalSize) {
-                console.log(this.$store.state.clientTotalSize)
-                return this.$store.state.clientTotalSize / this.speed
+            if(this.$store.state.clientTotalDownloaded) {
+                console.log()
+                return (this.$store.state.clientTotalSize - this.$store.state.clientTotalDownloaded) / this.speed
             } else return 0
             
         },
