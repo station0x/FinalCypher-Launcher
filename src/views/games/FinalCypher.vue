@@ -81,10 +81,12 @@
 
 <script>
 import { appWindow } from '@tauri-apps/api/window'
-import { Command } from '@tauri-apps/api/shell'
+import { Command, open } from '@tauri-apps/api/shell'
+import { invoke } from '@tauri-apps/api/tauri'
 import { auth } from '../../../firebaseConfig'
 import PlayBtn from '../../components/PlayBtn.vue'
 import InstallProgress from '../../components/InstallProgress.vue'
+import axios from 'axios'
 // import { getAuth } from '@firebase/auth'
 
 export default {
@@ -122,10 +124,20 @@ export default {
         },
         async openFC() {
             let IdToken = ''
-            auth.currentUser.getIdToken(true).then(function(idToken) {
+            let { fcDir } = (await axios.get('http://localhost:6212/clientExists')).data
+            auth.currentUser.getIdToken(true).then(async function(idToken) {
                 IdToken = idToken
+                let execCommand = `${fcDir}/FinalCypher.exe`
                 let authCommand = 'authToken=' + IdToken
-                new Command('fc-start', [authCommand]).execute()
+                console.log(execCommand, idToken)
+                // new Command('fc-start', [authCommand]).execute()
+                // await open(``);
+                try {
+                    invoke('open_exe', { exePath: execCommand, authToken: authCommand })
+                } catch(err) {
+                    console.log(er)
+                }
+
             }).catch(function(error) {
                 console.log(error)
             });

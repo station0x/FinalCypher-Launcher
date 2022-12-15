@@ -5,6 +5,7 @@
 use tauri::Manager;
 use tauri::SystemTray;
 use tauri::{CustomMenuItem, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent};
+use std::process::Command;
 // use std::collections::BTreeSet;
 // use merkle_hash::MerkleTree;
 // use merkle_hash::MerkleItem;
@@ -15,6 +16,15 @@ use tauri::{CustomMenuItem, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent}
 fn greet(name: &str) -> String {
   format!("Hello, {}! You've been greeted from Rust!!!!", name)
 }
+
+#[tauri::command]
+fn open_exe(exe_path: String, auth_token: String) -> Result<(), String> {
+   Command::new(exe_path)
+     .args([auth_token])
+     .spawn()
+     .map_err(|e| e.to_string())?;
+   Ok(())
+} 
 
 #[tauri::command]
 async fn close_splashscreen(window: tauri::Window) {
@@ -83,7 +93,7 @@ fn main() {
             }
             _ => {}
           })
-        .invoke_handler(tauri::generate_handler![greet, close_splashscreen])
+        .invoke_handler(tauri::generate_handler![greet, close_splashscreen, open_exe])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

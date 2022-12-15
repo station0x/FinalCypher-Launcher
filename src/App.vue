@@ -165,7 +165,7 @@
                       releaseAssets })
 
                       if(synced) {
-                        console.log(synced)
+                        this.$store.commit('SET_READY_TO_PLAY', true)
                       } else {
                         console.log(this.connection)
                         this.connection.send(JSON.stringify({ 
