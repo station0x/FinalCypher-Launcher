@@ -4,15 +4,12 @@ import router from './router'
 import store from './store'
 import { invoke } from '@tauri-apps/api/tauri'
 import { auth } from '../firebaseConfig'
-
+let isProd = import.meta.env.MODE == "development" ? false : true
 // tailwind
 import './index.css'
 import 'flowbite'
 // custom css
 import "./style.css"
-
-// disable right click
-// document.addEventListener('contextmenu', event => event.preventDefault());
 
 // dark mode
 document.documentElement.classList.add('dark')
@@ -20,6 +17,17 @@ document.documentElement.classList.add('dark')
 // With the Tauri global script:
 // const invoke = window.__TAURI__.invoke
 
+// disable dev mode
+if(isProd) {
+    // disable conext-menu and reloads
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('keydown', (e) => {
+        e = e || window.event;
+        if(e.keyCode == 116 || (e.ctrlKey && e.keyCode == 82)){
+            e.preventDefault();
+        }
+    });
+}
 document.addEventListener('DOMContentLoaded', async () => {
     await invoke("close_splashscreen");
 })

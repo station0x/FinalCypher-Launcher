@@ -7,6 +7,7 @@ import store from '../store'
 const Auth = () => import('../views/Auth.vue')
 const Register = () => import('../views/Register.vue')
 const FinalCypher = () => import('../views/games/FinalCypher.vue')
+const Logo = () => import('../views/Logo.vue')
 
 // Vue.use(VueRouter)
 const routes = [
@@ -15,6 +16,7 @@ const routes = [
   { path: '/finalcypher', component: FinalCypher, name: 'FinalCypher', meta: { requiresLogin: true } },
   { path: '/auth', component: Auth, name: 'Auth' },
   { path: '/register', component: Register, name: 'Register' },
+  { path: '/logo', component: Logo, name: 'Logo' },
 ]
 
 const router = createRouter({

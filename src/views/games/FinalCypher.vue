@@ -1,5 +1,5 @@
 <template>
-    <section id="fc-home" class="bg-white h-screen dark:bg-neutral-900">
+    <section id="fc-home" :style="randCover()" class="h-screen dark:bg-neutral-900">
         <div class="grid h-5/6 grid-cols-10">
             <!-- Create account -->
             <div class="flex col-span-7 mt-20 px-10 items-center justify-left ml-24 mb-24 py-6 lg:py-0 sm:px-0">
@@ -10,13 +10,13 @@
                     <img class="w-[300px]" src="./../../assets/img/fc.svg" />
                 </a>
             </div> 
-            <div id="right-section" class="flex col-span-3 items-center justify-center px-4 py-6 bg-primary-600 lg:py-0 sm:px-0">
+            <div class="flex col-span-3 items-center justify-center px-4 py-6 bg-primary-600 lg:py-0 sm:px-0">
                 <!-- <div class="max-w-md xl:max-w-xl"> -->
                     <div class="grid w-full h-screen grid-cols-10">
                         <div class="flex col-span-8"></div>
                         <div class="grid grid-rows-10 gap-4 col-span-2 justify-center">
                             <div class="row-span-1 self-start relative top-16">
-                                <div class="cursor-pointer hover:bg-neutral-700 w-[45px] h-[45px] bg-neutral-800 rounded-lg p-2.5">
+                                <div @click="toggleDropdown" class="cursor-pointer hover:bg-neutral-700 w-[45px] h-[45px] bg-neutral-800 rounded-lg p-2.5">
                                     <svg class="text-neutral-400 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
                                 </div>
                             </div>
@@ -40,27 +40,29 @@
                                     <path d="M20.317 4.15557C18.7873 3.45369 17.147 2.93658 15.4319 2.6404C15.4007 2.63469 15.3695 2.64897 15.3534 2.67754C15.1424 3.05276 14.9087 3.54225 14.7451 3.927C12.9004 3.65083 11.0652 3.65083 9.25832 3.927C9.09465 3.5337 8.85248 3.05276 8.64057 2.67754C8.62449 2.64992 8.59328 2.63564 8.56205 2.6404C6.84791 2.93563 5.20756 3.45275 3.67693 4.15557C3.66368 4.16129 3.65233 4.17082 3.64479 4.18319C0.533392 8.83155 -0.31895 13.3657 0.0991801 17.8436C0.101072 17.8655 0.11337 17.8864 0.130398 17.8997C2.18321 19.4073 4.17171 20.3225 6.12328 20.9291C6.15451 20.9386 6.18761 20.9272 6.20748 20.9015C6.66913 20.2711 7.08064 19.6063 7.43348 18.9073C7.4543 18.8664 7.43442 18.8178 7.39186 18.8016C6.73913 18.554 6.1176 18.2521 5.51973 17.9093C5.47244 17.8816 5.46865 17.814 5.51216 17.7816C5.63797 17.6873 5.76382 17.5893 5.88396 17.4902C5.90569 17.4721 5.93598 17.4683 5.96153 17.4797C9.88928 19.273 14.1415 19.273 18.023 17.4797C18.0485 17.4674 18.0788 17.4712 18.1015 17.4893C18.2216 17.5883 18.3475 17.6873 18.4742 17.7816C18.5177 17.814 18.5149 17.8816 18.4676 17.9093C17.8697 18.2588 17.2482 18.554 16.5945 18.8006C16.552 18.8168 16.533 18.8664 16.5538 18.9073C16.9143 19.6054 17.3258 20.2701 17.7789 20.9005C17.7978 20.9272 17.8319 20.9386 17.8631 20.9291C19.8241 20.3225 21.8126 19.4073 23.8654 17.8997C23.8834 17.8864 23.8948 17.8664 23.8967 17.8445C24.3971 12.6676 23.0585 8.17064 20.3482 4.18414C20.3416 4.17082 20.3303 4.16129 20.317 4.15557ZM8.02002 15.117C6.8375 15.117 5.86313 14.0313 5.86313 12.6981C5.86313 11.3648 6.8186 10.2791 8.02002 10.2791C9.23087 10.2791 10.1958 11.3743 10.1769 12.6981C10.1769 14.0313 9.22141 15.117 8.02002 15.117ZM15.9947 15.117C14.8123 15.117 13.8379 14.0313 13.8379 12.6981C13.8379 11.3648 14.7933 10.2791 15.9947 10.2791C17.2056 10.2791 18.1705 11.3743 18.1516 12.6981C18.1516 14.0313 17.2056 15.117 15.9947 15.117Z" fill="#A3A3A3"/>
                                     </svg>
                                 </div>
-                            </div>
+                            </div>  
                         </div>
                     </div>
                 <!-- </div> -->
             </div>              
         </div>
-        <div id="main-footer" class="flex w-screen h-1/6 justify-left items-center">
-            <button id="play-btn" class="text-[rgba(0,0,0,.7)] ml-24 justify-center w-[150px] h-[60px] text-3xl font-Konnect font-bold bg-brand-cold-700 hover:bg-brand-cold-800 focus:ring-4 focus:outline-none focus:ring-brand-cold-300 rounded-lg px-5 py-4 text-center inline-flex items-center dark:bg-brand-cold-600 dark:hover:bg-brand-cold-700 dark:focus:ring-brand-cold-800">
-                Play
-                <svg id="play-icon" class="ml-2 -mr-1 w-8 h-8" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
-            </button>
+        <!-- <div id="main-footer" class="flex w-screen h-1/6 justify-left items-center">
+            <PlayBtn @click="openFC" />
+        </div> -->
+        <div id="main-footer" class="w-full h-1/6">
+             <PlayBtn v-if="$store.state.readyToPlay" @click="openFC" />
+             <InstallProgress v-else/>
+            <!-- <div class="bg-brand-cold relative top-0 bg-opacity-30 text-xs font-medium text-blue-100 text-center h-full animate-pulse" style="width: 25%"></div> -->
+            <!-- <div class="text-xs font-medium text-blue-100 text-left p-0.5" style="width: 100%"> 25%</div> -->
         </div>
         <!-- Dropdown -->
-        <div id="dropdownAvatarName" class="absolute top-16  right-20 z-10 w-44 bg-white rounded divide-y divide-neutral-200 shadow dark:bg-neutral-800 dark:divide-neutral-700">
-            <div class="py-3 px-4 text-sm text-neutral-900 dark:text-neutral-400">
-            <div class="font-medium ">Hey</div>
+        <div :class="isDropdownOpen ? '' : 'hidden'" class="absolute top-16  right-20 z-10 w-44 bg-white rounded divide-y divide-neutral-200 shadow dark:bg-neutral-800 dark:divide-neutral-700">
+            <div class="py-3 px-4 text-sm uppercase text-neutral-900 dark:text-neutral-400">
             <div class="truncate">{{ user.displayName }}</div>
             </div>
-            <ul class="py-1 text-sm tracking-wide text-neutral-700 dark:text-neutral-400" aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton">
+            <ul class="text-sm tracking-wide text-neutral-700 dark:text-neutral-400" aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton">
             <li>
-                <a href="#" class="block py-2 px-4 hover:bg-neutral-100 dark:hover:bg-[rgba(0,0,0,.15)] dark:hover:text-white">Report a bug</a>
+                <a class="block cursor-pointer uppercase py-2.5 px-4 hover:bg-neutral-100 dark:hover:bg-neutral-700  dark:hover:text-white">Report a bug</a>
             </li>
             <!-- <li>
                 <a href="#" class="block py-2 px-4 hover:bg-neutral-100 dark:hover:bg-[rgba(0,0,0,.15)] dark:hover:text-white">Settings</a>
@@ -69,9 +71,9 @@
                 <a href="#" class="block py-2 px-4 hover:bg-neutral-100 dark:hover:bg-[rgba(0,0,0,.15)] dark:hover:text-white">Earnings</a>
             </li> -->
             </ul>
-            <div class="py-1">
-            <a @click="signOut" href="#" class="block py-2 px-4 text-sm text-neutral-700 hover:bg-neutral-100 dark:hover:bg-[rgba(0,0,0,.15)] dark:text-neutral-400 dark:hover:text-white">Sign out</a>
-            <a @click="close" href="#" class="block py-2 px-4 text-sm text-neutral-700 hover:bg-neutral-100 dark:hover:bg-[rgba(0,0,0,.15)] dark:text-neutral-400 dark:hover:text-white">Exit</a>
+            <div class="">
+            <a @click="signOut" class="block cursor-pointer py-2.5 px-4 uppercase text-sm text-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700  dark:text-neutral-400 dark:hover:text-white">Sign out</a>
+            <a @click="close" class="block cursor-pointer py-2.5 px-4 uppercase text-sm text-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700  dark:text-neutral-400 dark:hover:text-white">Exit</a>
             </div>
         </div>
     </section>
@@ -79,11 +81,33 @@
 
 <script>
 import { appWindow } from '@tauri-apps/api/window'
+import { Command } from '@tauri-apps/api/shell'
+import { auth } from '../../../firebaseConfig'
+import PlayBtn from '../../components/PlayBtn.vue'
+import InstallProgress from '../../components/InstallProgress.vue'
+// import { getAuth } from '@firebase/auth'
+
 export default {
+    data() {
+        return {
+            backgrounds: [
+                "atropa",
+                "zodwa"
+            ],
+            isDropdownOpen: false
+        }
+    },
+    components: {
+        PlayBtn,
+        InstallProgress
+    },
     computed: {
         user() {
             if(this.$store.state.user) return this.$store.state.user
-        }
+        },
+        clicks() {
+            return this.$store.state.clicked
+        },
     },
     methods: {
         signOut() {
@@ -92,18 +116,56 @@ export default {
         },
         async close() {
             await appWindow.close()
+        },
+        randCover() {
+            return `background-image: url('/cover-${this.backgrounds[Math.floor(Math.random()*this.backgrounds.length)]}.png')`
+        },
+        async openFC() {
+            let IdToken = ''
+            auth.currentUser.getIdToken(true).then(function(idToken) {
+                IdToken = idToken
+                let authCommand = 'authToken=' + IdToken
+                new Command('fc-start', [authCommand]).execute()
+            }).catch(function(error) {
+                console.log(error)
+            });
+        },
+        toggleDropdown() {
+                if(this.isDropdownOpen) {
+                    this.isDropdownOpen = false
+                } else {
+                    this.isDropdownOpen = true
+                    this.$store.commit("clicked", 0)
+                }
+            },
+        onClickApp() {
+            this.$store.commit("clicked")                
+        },
+        zeroClicks() {
+            this.$store.commit("clicked", 0) 
         }
-    }
+    },
+    watch: {
+        clicks() {
+            if(this.isDropdownOpen && this.$store.state.clicked === 2) this.isDropdownOpen = false
+        }
+    },
+    created() {
+        window.addEventListener('click', this.onClickApp)
+    },
+    destroyed() {
+        window.removeEventListener('click', this.onClickApp)
+    },
 }
 
 </script>
 
 <style>
 #fc-home {
-    background-image: url('../../assets/img/cover-lg.png');
+    /* background-color: rgb(23,23,23); */
     background-position: center;
     background-size: cover;
-    background-repeat: no-repeat;
+    background-repeat: no-repeat !important;
 }
 #main-footer {
     background: linear-gradient(107.35deg, rgba(14, 14, 14, 0.405) 15.06%, rgba(41, 41, 41, 0.5) 100.35%);
@@ -116,11 +178,14 @@ export default {
     background: linear-gradient(99.85deg, #58ffc5 1.39%, rgba(71, 255, 194, 0.4) 112.45%);  
     filter: drop-shadow(0 0em 1.5em #01E898);
 }
-#play-btn:hover #play-icon {
+#play-icon {
+    color: rgba(0,0,0,.9);
+}
+/* #play-btn:hover #play-icon {
     width: 38px;
     height: 38px;
     color: black;
-}
+} */
 #dropdownAvatarName {
     text-transform: uppercase;
 }

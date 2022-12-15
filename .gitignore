@@ -26,3 +26,16 @@ dist-ssr
 # Tauri Binaries
 src-tauri/binaries
 src-tauri/target
+
+# Client Binaries
+src-tauri/**/*.pak
+src-tauri/**/*.dll
+src-tauri/**/*.avi
+src-tauri/**/*.exe
+src-tauri/**/*.txt
+
+# Root Client
+Client
+
+*.env
+.env

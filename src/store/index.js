@@ -12,7 +12,18 @@ import {
 const store = createStore({
     state: {
         user: window.localStorage.getItem('user'),
-        isVerified: false
+        isVerified: false,
+        gameMerkleTree: undefined,
+        clientTotalSize: undefined,
+        clientTotalDownloaded: undefined,
+        isDownloading: false,
+        isUpdating: false,
+        downloadingFilename: '',
+        fcDirSize: 0,
+        readyToPlay: false,
+        clicked: 0,
+        clientVersion: undefined,
+        launcherVersion: undefined
     },
     mutations: {
         // SET_LOGGED_IN(state, value) {
@@ -23,6 +34,37 @@ const store = createStore({
         },
         SET_VERIFIED(state, bool) {
             state.isVerified = bool
+        },
+        SET_MERKLE_TREE(state, tree) {
+            state.gameMerkleTree = tree
+        },
+        SET_TOTAL_SIZE(state, totalSize) {
+            state.clientTotalSize = totalSize
+        },
+        SET_TOTAL_DOWNLOADED(state, totalDownloaded) {
+            state.clientTotalDownloaded = totalDownloaded
+        },
+        SET_UPDATING(state, isUpdating) {
+            state.isUpdating = isUpdating
+        },
+        SET_DOWNLOADING_FILENAME(state, filename) {
+            state.downloadingFilename = filename
+        },
+        SET_FC_DIR_SIZE(state, size) {
+            state.fcDirSize = size
+        },
+        SET_READY_TO_PLAY(state, bool) {
+            state.readyToPlay = bool
+        },
+        clicked(state, n) {
+            if(n === 0) state.clicked = n
+            else state.clicked += 1  
+        },
+        SET_CLIENT_VERSION(state, version) {
+            state.clientVersion = version
+        },
+        SET_LAUNCHER_VERSION(state, version) {
+            state.launcherVersion = version
         }
     },
     getters: {
@@ -31,6 +73,9 @@ const store = createStore({
         },
         userVerified(state) {
             return state.isVerified
+        },
+        gameMerkleTree(state) {
+            return state.gameMerkleTree
         }
     },
     actions: {
@@ -57,24 +102,24 @@ const store = createStore({
             if (!response) {
                 throw new Error('login failed')
             }
-      },
-      async logOut(context){
-            await signOut(auth)
-            context.commit('SET_USER', null)
-            context.commit('SET_VERIFIED', false)
-      },
-      async fetchUser(context ,user) {
-            context.commit("SET_LOGGED_IN", user !== null);
-            if (user) {
-            context.commit("SET_USER", {
-                displayName: user.displayName,
-                email: user.email
-            });
-            } else {
-            context.commit("SET_USER", null);
+        },
+        async logOut(context){
+                await signOut(auth)
+                context.commit('SET_USER', null)
+                context.commit('SET_VERIFIED', false)
+        },
+        async fetchUser(context ,user) {
+                context.commit("SET_LOGGED_IN", user !== null);
+                if (user) {
+                context.commit("SET_USER", {
+                    displayName: user.displayName,
+                    email: user.email
+                });
+                } else {
+                context.commit("SET_USER", null);
+                }
             }
         }
-    }
 })
 
 // export the store

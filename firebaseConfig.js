@@ -1,10 +1,9 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app"
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 import { getAuth } from 'firebase/auth'
 import { getAnalytics } from "firebase/analytics"
 import { getFunctions } from 'firebase/functions'
-
-console.log(import.meta.env)
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -18,6 +17,12 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
+// self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+const appCheck = initializeAppCheck(app, {
+  // appcheck public key
+  provider: new ReCaptchaV3Provider('6LfRcgMjAAAAAFJq2BsugaQf0qbZcrBqIBpbKvmN'),
+  isTokenAutoRefreshEnabled: true
+})
 const analytics = getAnalytics(app)
 const functions = getFunctions(app)
 const auth = getAuth(app)
@@ -26,5 +31,6 @@ export {
   app, 
   analytics, 
   auth,
-  functions
+  functions,
+  appCheck
 }
