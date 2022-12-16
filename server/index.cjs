@@ -228,7 +228,7 @@ websocketServer.on("connection", (webSocketClient) => {
                     
                     // console.log(diffDownloader)
                     try {
-                        // await diffDownloader.download();
+                        await diffDownloader.download();
                     } catch (error) {
                         console.log(error);
                         webSocketClient.send(JSON.stringify({ error }))
