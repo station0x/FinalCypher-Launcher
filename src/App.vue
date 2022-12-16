@@ -128,7 +128,6 @@
           }
       },
       async mounted() {
-        if(!this.shouldUpdate) {
           this.connection = new WebSocket('ws://localhost:6213/');
             // get local cache directory 
             const appCacheDirPath = await appCacheDir()
@@ -171,15 +170,15 @@
                         this.$store.commit('SET_READY_TO_PLAY', true)
                       } else {
                         console.log(this.connection)
-                        // this.connection.send(JSON.stringify({ 
-                        //   message: 'updateClient',
-                        //   remoteMapping, 
-                        //   assetsMapping, 
-                        //   localDiffs, 
-                        //   releaseAssets,
-                        //   cacheDir: appCacheDirPath,
-                        //   remoteBatchVersion
-                        //  }))
+                        this.connection.send(JSON.stringify({ 
+                          message: 'updateClient',
+                          remoteMapping, 
+                          assetsMapping, 
+                          localDiffs, 
+                          releaseAssets,
+                          cacheDir: appCacheDirPath,
+                          remoteBatchVersion
+                         }))
                       }
                     } catch(err) {
                       console.log(err)
@@ -190,7 +189,7 @@
             // this.connection.send('updateC')
             this.connection.onmessage = async (event) => {
                 let message = JSON.parse(event.data);
-                // console.log(message)
+                console.log(message)
                 this.$store.commit('SET_TOTAL_SIZE', message.totalSize)
                 this.$store.commit('SET_TOTAL_DOWNLOADED', message.totalDownloaded)
                 this.$store.commit('SET_UPDATING', message.isUpdating)
@@ -201,7 +200,6 @@
                 this.time = `${this.formatBytes(message.totalDownloaded)} / ${this.formatBytes(message.totalSize)}`
                 if(message.error) this.wsError = message.error
             }
-        }
 
         const targetEl = this.$refs.verifyModal
         const options = {
@@ -211,29 +209,13 @@
         this.modal = new Modal(targetEl, options)
     },
     async created() {
-        try {
-          const { shouldUpdate, manifest } = await checkUpdate()
-          if (shouldUpdate) {
-            this.shouldUpdate = true
-            console.log(shouldUpdate)
-            console.log(manifest)
-            // display dialog
-            await installUpdate()
-            // install complete, restart the app
-            await relaunch()
-          } else {
-            const cmd = Command.sidecar('binaries/fc-core');
-            cmd.spawn().then((child) => {
-              console.log(child.pid)
-              listen(TauriEvent.WINDOW_DESTROYED, function () {
-                child.kill();
-              })
-            })
-          }
-        } catch (error) {
-          console.log(error)
-        }
-
+      const cmd = Command.sidecar('binaries/fc-core');
+      cmd.spawn().then((child) => {
+        console.log(child.pid)
+        listen(TauriEvent.WINDOW_DESTROYED, function () {
+          child.kill();
+        })
+      })
     }
 }
 </script>
