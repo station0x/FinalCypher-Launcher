@@ -125,7 +125,7 @@ export default {
         async openFC() {
             let IdToken = ''
             let { fcDir } = (await axios.get('http://localhost:6212/clientExists')).data
-            auth.currentUser.getIdToken(true).then(async function(idToken) {
+            auth.currentUser.getIdToken().then(async function(idToken) {
                 IdToken = idToken
                 let execCommand = `${fcDir}/FinalCypher.exe`
                 let authCommand = 'authToken=' + IdToken
