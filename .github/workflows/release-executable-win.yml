@@ -76,7 +76,7 @@ jobs:
           # releaseDraft: true
           # prerelease: false
           # projectPath: ${{env.working-directory}}
-          includeDebug: true
+          # includeDebug: true
           releaseId: ${{ needs.create-release.outputs.release_id }}
   
   publish-release-locally:
