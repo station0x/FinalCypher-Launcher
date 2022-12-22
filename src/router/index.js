@@ -8,6 +8,7 @@ const Auth = () => import('../views/Auth.vue')
 const Register = () => import('../views/Register.vue')
 const FinalCypher = () => import('../views/games/FinalCypher.vue')
 const Logo = () => import('../views/Logo.vue')
+const Updater = () => import('../views/Updater.vue')
 
 // Vue.use(VueRouter)
 const routes = [
@@ -17,6 +18,7 @@ const routes = [
   { path: '/auth', component: Auth, name: 'Auth' },
   { path: '/register', component: Register, name: 'Register' },
   { path: '/logo', component: Logo, name: 'Logo' },
+  { path: '/updater', component: Updater, name: 'Updater' }
 ]
 
 const router = createRouter({
