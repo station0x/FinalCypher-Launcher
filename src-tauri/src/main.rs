@@ -3,9 +3,11 @@
     windows_subsystem = "windows"
 )]
 use tauri::Manager;
+use tauri::Size;
 use tauri::SystemTray;
 use tauri::{CustomMenuItem, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent};
 use std::process::Command;
+// use tauri::Size::Physical;
 // use std::collections::BTreeSet;
 // use merkle_hash::MerkleTree;
 // use merkle_hash::MerkleItem;
@@ -15,6 +17,14 @@ use std::process::Command;
 #[tauri::command]
 fn greet(name: &str) -> String {
   format!("Hello, {}! You've been greeted from Rust!!!!", name)
+}
+#[tauri::command]
+fn resize(w: u32, h: u32, window: tauri::Window) -> Result<(), String> {
+  window.set_size(Size::Physical(tauri::PhysicalSize { width: w, height: h }))
+  // window.set_size(tauri:Size::Physical(()))
+  // window.set_size(tauri::Size::Physical(Size::Physical(()) ))
+  .map_err(|e| e.to_string())?;
+  Ok(())
 }
 
 #[tauri::command]
@@ -93,7 +103,7 @@ fn main() {
             }
             _ => {}
           })
-        .invoke_handler(tauri::generate_handler![greet, close_splashscreen, open_exe])
+        .invoke_handler(tauri::generate_handler![greet, close_splashscreen, open_exe, resize])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
