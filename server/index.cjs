@@ -143,7 +143,9 @@ websocketServer.on("connection", (webSocketClient) => {
                 // console.log(localVersionCacheFile)
                 let diffIds = []
                 for(let diff in localDiffs) {
+                    console.log(localDiffs[diff])
                     let diffPath = remoteMapping[localDiffs[diff]]
+                    console.log(diffPath)
                     let diffId = assetsMapping[diffPath]
                     diffIds.push(diffId)
                 }
@@ -162,6 +164,7 @@ websocketServer.on("connection", (webSocketClient) => {
                         assetArr.push(asset.size)
                         assetsURL.push(assetArr)
                     }
+                    // console.log(asset)
                 }
 
                 let totalDownloaded = 0
