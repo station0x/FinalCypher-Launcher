@@ -23,7 +23,8 @@ const store = createStore({
         readyToPlay: false,
         clicked: 0,
         clientVersion: undefined,
-        launcherVersion: undefined
+        launcherVersion: undefined,
+        isSplash: true
     },
     mutations: {
         // SET_LOGGED_IN(state, value) {
@@ -65,6 +66,9 @@ const store = createStore({
         },
         SET_LAUNCHER_VERSION(state, version) {
             state.launcherVersion = version
+        },
+        SET_IS_SPLASH(state, bool) {
+            state.isSplash = bool
         }
     },
     getters: {
