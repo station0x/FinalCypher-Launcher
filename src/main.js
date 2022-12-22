@@ -28,9 +28,9 @@ if(isProd) {
     //     }
     // });
 }
-document.addEventListener('DOMContentLoaded', async () => {
-    await invoke("close_splashscreen");
-})
+// document.addEventListener('DOMContentLoaded', async () => {
+//     await invoke("close_splashscreen");
+// })
 
 // auth.onAuthStateChanged
 
