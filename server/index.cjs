@@ -169,7 +169,7 @@ websocketServer.on("connection", (webSocketClient) => {
 
                 let totalDownloaded = 0
                 let dirSize = 0
-                if(!isUpdating) {
+                if(isUpdating) {
                     dirSize = await du(fcDir)
                     totalDownloaded += dirSize
                     // totalSize += dirSize

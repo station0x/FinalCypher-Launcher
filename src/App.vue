@@ -136,10 +136,14 @@
                 console.log('WS connected and opened.')
 
                 let clientExists = (await axios.get('http://localhost:6212/clientExists')).data.exists
-                let { clientVersion, launcherVersion } = (await axios.get('http://localhost:6212/getVersions')).data
-                this.$store.commit('SET_CLIENT_VERSION', clientVersion)
-                this.$store.commit('SET_LAUNCHER_VERSION', launcherVersion)
-
+                try {
+                  let { clientVersion, launcherVersion } = (await axios.get('http://localhost:6212/getVersions')).data
+                  this.$store.commit('SET_CLIENT_VERSION', clientVersion)
+                  this.$store.commit('SET_LAUNCHER_VERSION', launcherVersion)
+                } catch(err) {
+                  this.$store.commit('SET_CLIENT_VERSION', "0.1.3")
+                  this.$store.commit('SET_LAUNCHER_VERSION', "0.1.9")
+                }
                 // this.logs = clientExists
                 if(!clientExists){
                     this.connection.send(JSON.stringify({ 
