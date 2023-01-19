@@ -52,9 +52,10 @@
     import Loader from "./components/Loader.vue"
     import { sendEmailVerification } from 'firebase/auth'
     import { mapGetters } from "vuex"
-    import { appCacheDir } from '@tauri-apps/api/path';
+    import { appCacheDir } from '@tauri-apps/api/path'
     import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
     import { relaunch } from '@tauri-apps/api/process'
+    import { invoke } from '@tauri-apps/api/tauri'
     import { listen, TauriEvent } from "@tauri-apps/api/event"
     import { Command } from "@tauri-apps/api/shell"
     import axios from 'axios'
@@ -220,6 +221,29 @@
           child.kill();
         })
       })
+
+      try {
+        const { shouldUpdate, manifest } = await checkUpdate()
+        if (shouldUpdate) {
+          // display dialog
+          console.log(manifest)
+          await invoke('resize', { w: 465 , h: 590 })
+          await invoke('center_window')
+          this.$router.push({ name: 'Updater' })
+          await installUpdate()
+          await relaunch()
+        } else {
+          let self = this
+          setTimeout(async() => {
+            this.$store.commit('SET_IS_SPLASH', false)
+            console.log(this.$store.state)
+            await invoke('resize', { w: 1500 , h: 800 })
+            await invoke('center_window')
+          }, 4000)
+        }
+      } catch (error) {
+        console.log(error)
+      }
     }
 }
 </script>

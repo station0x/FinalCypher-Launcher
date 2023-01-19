@@ -85,14 +85,11 @@
 
 <script>
 import { appWindow } from '@tauri-apps/api/window'
-import { Command, open } from '@tauri-apps/api/shell'
 import { invoke } from '@tauri-apps/api/tauri'
 import { auth } from '../../../firebaseConfig'
 import PlayBtn from '../../components/PlayBtn.vue'
 import InstallProgress from '../../components/InstallProgress.vue'
 import axios from 'axios'
-import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
-import { relaunch } from '@tauri-apps/api/process'
 import Logo from '../Logo.vue'
 // import { getAuth } from '@firebase/auth'
 
@@ -176,26 +173,6 @@ export default {
     },
     async created() {
         window.addEventListener('click', this.onClickApp)
-        try {
-            const { shouldUpdate, manifest } = await checkUpdate()
-            if (shouldUpdate) {
-            // display dialog
-            console.log(manifest)
-            await invoke('resize', { w: 465 , h: 590 })
-            this.$router.push({ name: 'Updater' })
-            //   await installUpdate()
-            // install complete, restart the app
-            //   await relaunch()
-            } else {
-                let self = this
-                setTimeout(()=> {
-                    self.splash = false
-                    self.$store.commit('SET_IS_SPLASH', false)
-                }, 4000)
-            }
-        } catch (error) {
-            console.log(error)
-        }
     },
     destroyed() {
         window.removeEventListener('click', this.onClickApp)

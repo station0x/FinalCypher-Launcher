@@ -140,6 +140,7 @@ websocketServer.on("connection", (webSocketClient) => {
                 }
                 let localVersion = (JSON.parse(localVersionCacheFile)).localVersion
                 let isUpdating = localVersion === remoteBatchVersion ? false : true
+                console.log(localVersion, remoteBatchVersion, isUpdating)
                 // console.log(localVersionCacheFile)
                 let diffIds = []
                 for(let diff in localDiffs) {
@@ -156,13 +157,13 @@ websocketServer.on("connection", (webSocketClient) => {
 
                 for(let asset in releaseAssets) {
                     asset = releaseAssets[asset]
-                    totalSize += asset.size
                     if(diffIds.includes(asset.id)) {
                         let assetArr = []
                         assetArr.push(asset.browser_download_url)
                         assetArr.push(asset.name)
                         assetArr.push(asset.size)
                         assetsURL.push(assetArr)
+                        totalSize += asset.size
                     }
                     // console.log(asset)
                 }
@@ -172,6 +173,7 @@ websocketServer.on("connection", (webSocketClient) => {
                 if(isUpdating) {
                     dirSize = await du(fcDir)
                     totalDownloaded += dirSize
+                    totalSize += dirSize
                     // totalSize += dirSize
                 } 
                 let totalSwap = 0
@@ -219,7 +221,8 @@ websocketServer.on("connection", (webSocketClient) => {
                                     name,
                                     isUpdating,
                                     dirSize,
-                                    readyToPlay: false
+                                    readyToPlay: false,
+                                    totalUpdateFiles: assetsURL
                                  }))
                                 time = now
                             }
@@ -232,6 +235,11 @@ websocketServer.on("connection", (webSocketClient) => {
                     // console.log(diffDownloader)
                     try {
                         await diffDownloader.download();
+                        if(isUpdating) {
+                            fs.writeFileSync(`${cacheDir}/batchVersionCache.json`, JSON.stringify({
+                                localVersion: remoteBatchVersion
+                            }), "utf-8");
+                        }
                     } catch (error) {
                         console.log(error);
                         webSocketClient.send(JSON.stringify({ error }))
