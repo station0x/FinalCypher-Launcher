@@ -18,6 +18,7 @@ use std::process::Command;
 fn greet(name: &str) -> String {
   format!("Hello, {}! You've been greeted from Rust!!!!", name)
 }
+
 #[tauri::command]
 fn resize(w: u32, h: u32, window: tauri::Window) -> Result<(), String> {
   window.set_size(Size::Physical(tauri::PhysicalSize { width: w, height: h }))
@@ -26,6 +27,16 @@ fn resize(w: u32, h: u32, window: tauri::Window) -> Result<(), String> {
   .map_err(|e| e.to_string())?;
   Ok(())
 }
+
+#[tauri::command]
+fn center_window(window: tauri::Window) -> Result<(), String> {
+  window.center()
+  // window.set_size(tauri:Size::Physical(()))
+  // window.set_size(tauri::Size::Physical(Size::Physical(()) ))
+  .map_err(|e| e.to_string())?;
+  Ok(())
+}
+
 
 #[tauri::command]
 fn open_exe(exe_path: String, auth_token: String) -> Result<(), String> {
@@ -103,7 +114,7 @@ fn main() {
             }
             _ => {}
           })
-        .invoke_handler(tauri::generate_handler![greet, close_splashscreen, open_exe, resize])
+        .invoke_handler(tauri::generate_handler![greet, close_splashscreen, open_exe, resize, center_window])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

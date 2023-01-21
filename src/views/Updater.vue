@@ -37,6 +37,7 @@
 import { appWindow } from '@tauri-apps/api/window'
 import { emit } from '@tauri-apps/api/event'
 import { listen } from '@tauri-apps/api/event'
+import { relaunch } from '@tauri-apps/api/process'
 
 export default {
     methods: {
@@ -44,9 +45,15 @@ export default {
             appWindow.minimize()
         }
     },
-    created() {
-        listen('tauri://update-status', function (res) {
+    async created() {
+        listen('tauri://update-status', async function (res) {
             console.log('New status: ', res)
+            if(true) // some condition
+            {
+                await invoke('resize', { w: 465 , h: 590 })
+                await relaunch()
+
+            }
         })
         emit('tauri://update-install')
     }
